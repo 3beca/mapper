@@ -1,0 +1,19 @@
+version: '3'
+services:
+  mapper-mongodb:
+    image: mongo:4.2.0
+    environment:
+      - MONGO_DATA_DIR=/data/db
+    volumes:
+      - mapper-mongodb-storage:/data/db
+    ports:
+      - 27017:27017
+  mapper:
+    image: francescorivola/tribeca-mapper:latest
+    environment:
+      - MONGODB_URL=mongodb://mapper-mongodb:27017
+      - HTTP_HOST=0.0.0.0
+    ports:
+      - "8888:8888"
+volumes:
+  mapper-mongodb-storage:
