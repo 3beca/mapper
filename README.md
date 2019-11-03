@@ -1,6 +1,10 @@
 # MAPPER
 A simple request mapper
 
+[![CodeFactor](https://www.codefactor.io/repository/github/3beca/mapper/badge)](https://www.codefactor.io/repository/github/3beca/mapper)
+[![Codeship Status for 3beca/mapper](https://app.codeship.com/projects/4ead19a0-e090-0137-e4ad-12a315aacd2b/status?branch=master)](https://app.codeship.com/projects/367897) 
+[![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=3beca/mapper)](https://dependabot.com)
+[![codecov](https://codecov.io/gh/3beca/mapper/branch/master/graph/badge.svg)](https://codecov.io/gh/3beca/mapper)
 
 ## Getting Started
 
