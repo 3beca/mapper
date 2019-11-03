@@ -1,8 +1,12 @@
-import mongodb from 'mongodb';
+import mongodb, { ObjectId } from 'mongodb';
 
 export const COLLECTION_SOURCES = 'sources';
 export const COLLECTION_TARGETS = 'targets';
 export const COLLECTION_MAPPINGS = 'mapping';
+
+export function getId(id) {
+    return new ObjectId(id);
+}
 
 export function connect(uri) {
     return mongodb.connect(uri, {

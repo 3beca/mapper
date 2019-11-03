@@ -32,6 +32,7 @@
     "@babel/core": "^7.6.3",
     "@babel/node": "^7.6.3",
     "@babel/preset-env": "^7.6.3",
+    "@types/jest": "^24.0.21",
     "babel-eslint": "^10.0.3",
     "codecov": "^3.6.1",
     "eslint": "^6.6.0",
@@ -41,7 +42,6 @@
     "nodemon": "^1.19.4"
   },
   "dependencies": {
-    "@types/jest": "^24.0.21",
     "convict": "^5.1.0",
     "fastify": "^2.10.0",
     "fastify-swagger": "^2.4.0",

@@ -25,7 +25,7 @@ describe('admin', () => {
 
     describe('version', () => {
 
-        it('should return 200 with cep version', async () => {
+        it('should return 200 with mapper version', async () => {
             const response = await server.inject({
                 method: 'GET',
                 url: '/admin/version'

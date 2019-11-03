@@ -38,7 +38,7 @@ describe('Route mapper', () => {
         }
     );
 
-    it('should return 204', async () => {
+    it('should return 204 when receive a POST request', async () => {
         const sourceName = 'testsourcename1';
         const sourceRequest = {
             params: {id: 25},
@@ -76,7 +76,7 @@ describe('Route mapper', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    it('should return 204', async () => {
+    it('should return 200 when receive a PUT request', async () => {
         const sourceName = 'testsourcename1';
         const sourceRequest = {
             params: {id: 25},

@@ -1,6 +1,7 @@
 import {
     connect,
     getAndSetupDatabase,
+    getId,
     COLLECTION_MAPPINGS,
     COLLECTION_SOURCES,
     COLLECTION_TARGETS
@@ -40,47 +41,47 @@ describe(
         );
 
         it(
-            'retrun an empty array of requests when no request sent',
+            'return an empty array of requests when no request sent',
             async () => {
-                const sourceName = 'testsourcename1';
+                const sourceId = '123456789012';
                 const sourceRequest = undefined;
 
-                const response = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const response = await mapper(sourceId, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(response).toEqual([]);
             }
         );
 
         it(
-            'retrun an empty array of requests when no  body, params or headers',
+            'return an empty array of requests when no  body, params or headers',
             async () => {
-                const sourceName = 'testsourcename1';
+                const sourceId = '123456789012';
                 const sourceRequest = {};
 
-                const response = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const response = await mapper(sourceId, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(response).toEqual([]);
             }
         );
 
         it(
-            'retrun an empty array of requests when no source found',
+            'return an empty array of requests when no source found',
             async () => {
-                const sourceName = 'testsourcename1';
+                const sourceId = '123456789012';
                 const sourceRequest = {
                     params: {},
                     body: {},
                     headers: {}
                 };
 
-                const response = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const response = await mapper(sourceId, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(response).toEqual([]);
             }
         );
 
         it(
-            'retrun an array of one request when source found',
+            'return an array of one request when source found',
             async () => {
                 const sourceName = 'testsourcename1';
                 const sourceRequest = {
@@ -98,11 +99,11 @@ describe(
                     headers: undefined,
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
-                await targetsCollection.insertOne(target);
-                await mappingsCollection.insertOne(mapping);
-                await sourcesCollection.insertOne({name: sourceName, flows: [{targetName: target.name, mappingName: mapping.name}]});
+                const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
+                const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
+                const { insertedId: sourceInserted} = await sourcesCollection.insertOne({name: sourceName, flows: [{mappingId: mappingInserted, targetId: targetInserted}]});
 
-                const {requests} = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const {requests, errors} = await mapper(sourceInserted, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -118,7 +119,7 @@ describe(
         );
 
         it(
-            'retrun an array of one request when source found without body',
+            'return an array of one request when source found without body',
             async () => {
                 const sourceName = 'testsourcename1';
                 const sourceRequest = {
@@ -135,11 +136,11 @@ describe(
                     headers: undefined,
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
-                await targetsCollection.insertOne(target);
-                await mappingsCollection.insertOne(mapping);
-                await sourcesCollection.insertOne({name: sourceName, flows: [{targetName: target.name, mappingName: mapping.name}]});
+                const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
+                const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
+                const { insertedId: sourceInserted} = await sourcesCollection.insertOne({name: sourceName, flows: [{mappingId: mappingInserted, targetId: targetInserted}]});
 
-                const {requests} = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(sourceInserted, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -155,7 +156,7 @@ describe(
         );
 
         it(
-            'retrun an array of one request and one error',
+            'return an array of one request and one error',
             async () => {
                 const sourceName = 'testsourcename1';
                 const sourceRequest = {
@@ -173,17 +174,17 @@ describe(
                     headers: '{"Content-Type" : "application/json"}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
-                await targetsCollection.insertOne(target);
-                await mappingsCollection.insertOne(mapping);
-                await sourcesCollection.insertOne({
+                const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
+                const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
+                const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
                     name: sourceName,
                     flows: [
-                        {targetName: target.name, mappingName: mapping.name},
-                        {targetName: 'invalid', mappingName: 'invalid'}
+                        {mappingId: mappingInserted, targetId: targetInserted},
+                        {mappingId: '123456789158', targetId: '098765432165'}
                     ]
                 });
 
-                const {requests, errors} = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const {requests, errors} = await mapper(sourceInserted, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -205,9 +206,9 @@ describe(
                                 message: 'Error transforming source',
                                 meta: {
                                     details: 'Error target not found',
-                                    mapping: 'invalid',
-                                    source: 'testsourcename1',
-                                    target: 'invalid'
+                                    mapping: '123456789158',
+                                    source: sourceInserted,
+                                    target: '098765432165'
                                 }
                             }
                         ]
@@ -217,7 +218,7 @@ describe(
         );
 
         it(
-            'retrun an array of two errors, one for flow not found and other for error parsing json',
+            'return an array of two errors, one for flow not found and other for error parsing json',
             async () => {
                 const sourceName = 'testsourcename1';
                 const sourceRequest = {
@@ -235,17 +236,17 @@ describe(
                     headers: '{"Content-Type" : "application/json"}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
-                await targetsCollection.insertOne(target);
-                await mappingsCollection.insertOne(mapping);
-                await sourcesCollection.insertOne({
+                const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
+                const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
+                const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
                     name: sourceName,
                     flows: [
-                        {targetName: target.name, mappingName: mapping.name},
-                        {targetName: 'invalid', mappingName: 'invalid'}
+                        {mappingId: mappingInserted, targetId: targetInserted},
+                        {mappingId: '123456789158', targetId: '098765432165'}
                     ]
                 });
 
-                const {errors} = await mapper(sourceName, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
+                const {errors} = await mapper(sourceInserted, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection);
 
                 expect(Array.isArray(errors.errors)).toBe(true);
                 expect(errors.errors.length).toBe(2);
@@ -257,9 +258,9 @@ describe(
                                 message: 'Error transforming source',
                                 meta: {
                                     details: 'Error parsing body from mapping template: Unexpected string in JSON at position 24',
-                                    mapping: 'mappingtest1',
-                                    source: 'testsourcename1',
-                                    target: 'targettest1'
+                                    mapping: mappingInserted,
+                                    source: sourceInserted,
+                                    target: targetInserted
                                 }
                             },
                             {
@@ -267,9 +268,9 @@ describe(
                                 message: 'Error transforming source',
                                 meta: {
                                     details: 'Error target not found',
-                                    mapping: 'invalid',
-                                    source: 'testsourcename1',
-                                    target: 'invalid'
+                                    mapping: '123456789158',
+                                    source: sourceInserted,
+                                    target: '098765432165'
                                 }
                             }
                         ]
@@ -282,6 +283,7 @@ describe(
             'throw an error when mongodb fails',
             async () => {
                 expect.assertions(1);
+                const sourceId = '098765432145';
                 const sourceName = 'testsourcename1';
                 const sourceRequest = {
                     params: {id: 25},
@@ -302,7 +304,7 @@ describe(
                 const fakeSourceCollection = {findOne: jest.fn().mockRejectedValue(new Error('Mongo error'))};
 
                 try {
-                    await mapper(sourceName, sourceRequest, fakeSourceCollection, mappingsCollection, targetsCollection);
+                    await mapper(sourceId, sourceRequest, fakeSourceCollection, mappingsCollection, targetsCollection);
                 }
                 catch (error) {
                     expect(error.message).toEqual('Mongo error');
