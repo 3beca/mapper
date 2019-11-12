@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import packageInfo from '../package.json';
 import fastifySwagger from 'fastify-swagger';
+import formBody from 'fastify-formbody';
 import config from './config';
 import { encodeError } from './utils/error-encoder';
 import {
@@ -44,6 +45,9 @@ export function buildServer(
 			produces: ['application/json']
 		}
 	});
+
+	// Form-body pluggin
+	app.register(formBody);
 
 	// End points
 	app.register(buildAdminRoutes(), { prefix: '/admin' });

@@ -33,9 +33,6 @@ export const mapperFlow = (
     let idMongo;
     try {
         idMongo = getId(sourceId);
-        if (!idMongo) {
-            throw new Error('sourceId is null');
-        }
     }
     catch (error) {
         return reply.code(400).headers(
@@ -81,7 +78,6 @@ export const mapperFlow = (
 
     try {
         const {requests, errors} = await mapper(source, context, mappingsCollection, targetsCollection);
-        console.log('Req', requests);
         const responses = await requester(requests);
 
         return reply.code(200).send({
@@ -92,7 +88,6 @@ export const mapperFlow = (
         });
     }
     catch (error) {
-        console.log('Error', error);
         return reply.code(400).headers(
             {
                 'content-type': 'application/json'

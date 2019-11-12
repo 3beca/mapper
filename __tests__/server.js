@@ -2,7 +2,8 @@ jest.mock('pino');
 import { buildServer } from '../src/server';
 import { encodeError } from '../src/utils/error-encoder';
 import {
-	ERROR_NOTFOUND
+  ERROR_NOTFOUND,
+  ERROR_UNKNOWN
 } from '../src/errors';
 
 describe('builServer', () => {
@@ -37,6 +38,37 @@ describe('builServer', () => {
           )
         ));
     });
+
+    it('should return 415 when send an invalid header', async () => {
+      const sourceName = 'testsourcename1';
+      const context = {
+          params: {id: 25},
+          body: {name: 'Juanjo', temperature: 25.5},
+          headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'invalid/hedres'}
+      };
+
+
+      const response = await server.inject({
+          method: 'OPTIONS',
+          url: '/mappers/123456789098',
+          query: context.params,
+          payload: context.body,
+          headers: context.headers
+      });
+
+      expect(response.statusCode).toBe(415);
+      expect(JSON.parse(response.payload)).toEqual(
+          encodeError(
+              null,
+              ERROR_UNKNOWN.code,
+              ERROR_UNKNOWN.message,
+              {
+                  status: 415,
+                  details: 'FST_ERR_CTP_INVALID_MEDIA_TYPE: Unsupported Media Type: invalid/hedres'
+              }
+          )
+      );
+  });
 
     it('should return 200 for swagger endpoint', async () => {
         const response = await server.inject({
