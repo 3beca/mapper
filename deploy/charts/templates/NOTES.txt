@@ -1,0 +1,3 @@
+Tribeca mapper Release with image {{ .Values.image }}
+
+Happy Release!!!

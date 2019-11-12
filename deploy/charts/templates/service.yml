@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tribeca-mapper
+  labels:
+    name: tribeca-mapper
+spec:
+  type: NodePort
+  ports:
+    - port: 3000
+      targetPort: 3000
+      nodePort: 30707
+      name: tcp
+  selector:
+    run: tribeca-mapper

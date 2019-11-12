@@ -28,11 +28,11 @@
   },
   "homepage": "https://github.com/3beca/mapper#readme",
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.3",
-    "@babel/node": "^7.6.3",
-    "@babel/preset-env": "^7.6.3",
-    "@types/jest": "^24.0.21",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
+    "@babel/node": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "@types/jest": "^24.0.22",
     "babel-eslint": "^10.0.3",
     "codecov": "^3.6.1",
     "eslint": "^6.6.0",
@@ -45,8 +45,8 @@
     "convict": "^5.1.0",
     "fastify": "^2.10.0",
     "fastify-swagger": "^2.4.0",
-    "liquidjs": "^9.2.0",
-    "mongodb": "^3.3.3",
+    "liquidjs": "^9.3.1",
+    "mongodb": "^3.3.4",
     "node-fetch": "^2.6.0"
   }
 }
