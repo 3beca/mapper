@@ -79,7 +79,7 @@ export function buildServer(
 		} else {
 			request.log.error(error);
 		}
-		reply.status(error.statusCode).send(
+		reply.status(error.statusCode || 500).send(
 			encodeError(
 				null,
 				ERROR_UNKNOWN.code,

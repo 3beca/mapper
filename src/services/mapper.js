@@ -5,9 +5,8 @@ import {
 } from '../errors';
 import { transformSource } from './http-engine';
 
-export const mapper = async (sourceId, sourceRequest, sourcesCollection, mappingsCollection, targetsCollection) => {
-    const source = await sourcesCollection.findOne({_id: getId(sourceId)});
-    if (!source) return [];
+export const mapper = async (source, context, mappingsCollection, targetsCollection) => {
+    if (!source) return {requests: []};
 
     const requests = [];
     let errors;
@@ -16,7 +15,7 @@ export const mapper = async (sourceId, sourceRequest, sourcesCollection, mapping
         const target = await targetsCollection.findOne({_id: getId(targetId)});
 
         try {
-            const request = await transformSource(sourceRequest, mapping.template, target);
+            const request = await transformSource(context, mapping.template, target);
             requests.push(request);
         }
         catch (error) {
@@ -25,7 +24,7 @@ export const mapper = async (sourceId, sourceRequest, sourcesCollection, mapping
                 ERROR_TRANSFORM_SOURCE.code,
                 ERROR_TRANSFORM_SOURCE.message,
                 {
-                    source: sourceId,
+                    source: source._id,
                     mapping: mappingId,
                     target: targetId,
                     details: error.message
@@ -34,6 +33,5 @@ export const mapper = async (sourceId, sourceRequest, sourcesCollection, mapping
             );
         }
     }
-
     return {requests, errors};
 };

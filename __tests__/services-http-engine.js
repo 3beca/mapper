@@ -20,7 +20,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -39,7 +39,7 @@ describe(
                     }
                 }));
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'application/json',
+                    'content-type': 'application/json',
                     'accept': 'application/json',
                     'X-APPID': 'tribeca',
                     timestamp: 123456789
@@ -58,7 +58,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}"}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}"}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -77,7 +77,7 @@ describe(
                     }
                 }));
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'application/json',
+                    'content-type': 'application/json',
                     'accept': 'application/json',
                     'X-APPID': ''
                 }));
@@ -96,7 +96,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -107,7 +107,7 @@ describe(
                 expect(request.url).toEqual('https://notifier.triveca.ovh/25?date=123456789');
                 expect(request.body).toBe(undefined);
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'application/json',
+                    'content-type': 'application/json',
                     'accept': 'application/json',
                     'X-APPID': 'tribeca',
                     timestamp: 123456789
@@ -132,7 +132,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'invalidurl'
                 };
 
@@ -186,7 +186,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -215,7 +215,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": application/json, "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": application/json, "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -242,7 +242,7 @@ describe(
                     template: '<html><body><div>Hello {{body.name}}</div><div>Estas a {{body.temperature}}ºC en tu casa'
                 };
                 const target = {
-                    headers: '{"Content-Type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -253,7 +253,7 @@ describe(
                 expect(request.url).toEqual('https://notifier.triveca.ovh/25?date=123456789');
                 expect(request.body).toEqual('<html><body><div>Hello Juanjo</div><div>Estas a 25ºC en tu casa');
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'text/html',
+                    'content-type': 'text/html',
                     'X-APPID': 'tribeca',
                     timestamp: 123456789
                 }));
@@ -275,7 +275,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -286,7 +286,7 @@ describe(
                 expect(request.url).toEqual('https://notifier.triveca.ovh/25?date=123456789');
                 expect(request.body).toEqual('<html><body><div>Hello Juanjo</div><div>Estas a 25ºC en tu casa');
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'text/html',
+                    'content-type': 'text/html',
                     'X-APPID': 'tribeca',
                     timestamp: 123456789
                 }));
@@ -304,7 +304,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "text/html", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
@@ -315,7 +315,7 @@ describe(
                 expect(request.url).toEqual('https://notifier.triveca.ovh/25?date=123456789');
                 expect(request.body).toBe(undefined);
                 expect(request.headers).toEqual(expect.objectContaining({
-                    'Content-Type': 'text/html',
+                    'content-type': 'text/html',
                     'X-APPID': 'tribeca',
                     timestamp: 123456789
                 }));
@@ -395,7 +395,7 @@ describe(
                 };
                 const target = {
                     method: 'POST',
-                    headers: '{"Content-Type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
                     url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
                 };
 
