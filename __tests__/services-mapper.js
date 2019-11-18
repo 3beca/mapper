@@ -266,7 +266,7 @@ describe(
                                 code: 1001,
                                 message: 'Error transforming source',
                                 meta: {
-                                    details: 'Error parsing body from mapping template: Unexpected string in JSON at position 24',
+                                    details: 'Error parsing body from mapping template: Unexpected string in JSON at position 24, body: {"sendorName": "Juanjo" "temperature": 25.5}',
                                     mapping: mappingInserted,
                                     source: source._id,
                                     target: targetInserted

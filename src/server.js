@@ -16,7 +16,8 @@ import { buildMapperRoutes } from './routes/mappers';
 export function buildServer(
 	sourcesCollection,
     mappingsCollection,
-    targetsCollection
+	targetsCollection,
+	responsesCollection
 ) {
 	const app = fastify({
 		logger,
@@ -51,7 +52,7 @@ export function buildServer(
 
 	// End points
 	app.register(buildAdminRoutes(), { prefix: '/admin' });
-	app.register(buildMapperRoutes(sourcesCollection, mappingsCollection, targetsCollection), { prefix: '/mappers' });
+	app.register(buildMapperRoutes(sourcesCollection, mappingsCollection, targetsCollection, responsesCollection), { prefix: '/mappers' });
 
 	app.setNotFoundHandler({
 		preValidation: (req, reply, next) => {

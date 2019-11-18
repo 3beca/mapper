@@ -6,7 +6,8 @@ import {
     getAndSetupDatabase,
     COLLECTION_SOURCES,
     COLLECTION_MAPPINGS,
-    COLLECTION_TARGETS
+    COLLECTION_TARGETS,
+    COLLECTION_RESPONSES
 } from './database';
 import logger from './logger';
 
@@ -21,7 +22,8 @@ async function main() {
     const server = buildServer(
         db.collection(COLLECTION_SOURCES),
         db.collection(COLLECTION_MAPPINGS),
-        db.collection(COLLECTION_TARGETS)
+        db.collection(COLLECTION_TARGETS),
+        db.collection(COLLECTION_RESPONSES)
     );
     await server.listen(port, host);
 

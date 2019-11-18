@@ -40,7 +40,6 @@ describe('builServer', () => {
     });
 
     it('should return 415 when send an invalid header', async () => {
-      const sourceName = 'testsourcename1';
       const context = {
           params: {id: 25},
           body: {name: 'Juanjo', temperature: 25.5},
@@ -68,7 +67,7 @@ describe('builServer', () => {
               }
           )
       );
-  });
+    });
 
     it('should return 200 for swagger endpoint', async () => {
         const response = await server.inject({
@@ -78,6 +77,47 @@ describe('builServer', () => {
         expect(response.statusCode).toBe(200);
         expect(response.headers['content-type']).toBe('text/html; charset=UTF-8');
     });
+
+    it('should capture unhandled 500 errors', async () => {
+        server.register(
+            async function(fastify, opts, next) {
+                fastify.get('/', opts, async () => {
+                    const error = new Error('Error 500');
+                    error.statusCode = 500;
+                    throw error;
+                });
+                next();
+            }, { prefix: '/error' }
+        );
+
+        const response = await server.inject({
+            method: 'GET',
+            url: '/error'
+        });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
+    });
+
+    it('should capture unhandled unknown errors', async () => {
+        server.register(
+            async function(fastify, opts, next) {
+                fastify.get('/', opts, async () => {
+                    throw new Error('Error Unknown');
+                });
+                next();
+            }, { prefix: '/error' }
+        );
+
+        const response = await server.inject({
+            method: 'GET',
+            url: '/error'
+        });
+
+        expect(response.statusCode).toBe(500);
+        expect(response.headers['content-type']).toBe('application/json; charset=utf-8');
+    });
+
 
     it('should return 200 for swagger json endpoint', async () => {
         const response = await server.inject({
