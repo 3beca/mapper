@@ -10,18 +10,22 @@ import config from '../src/config';
 import {
     mapper
 } from '../src/services/mapper';
+import { buildMappingsService } from '../src/services/mappings';
+import { buildTargetsService } from '../src/services/targets';
 
 describe(
     'mapper service should',
     () => {
-        let dbClient, db, mappingsCollection, sourcesCollection, targetsCollection;
+        let dbClient, db, mappingsCollection, mappingsService, sourcesCollection, targetsCollection, targetsService;
         beforeAll(
             async () => {
                 dbClient = await connect(config.mongodb.url);
                 db = await getAndSetupDatabase(dbClient, 'test-mapper-service');
                 mappingsCollection = db.collection(COLLECTION_MAPPINGS);
+                mappingsService = buildMappingsService(mappingsCollection);
                 sourcesCollection = db.collection(COLLECTION_SOURCES);
                 targetsCollection = db.collection(COLLECTION_TARGETS);
+                targetsService = buildTargetsService(targetsCollection);
             }
         );
 
@@ -50,7 +54,7 @@ describe(
                 };
                 const context = undefined;
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(requests).toEqual([]);
             }
@@ -66,7 +70,7 @@ describe(
                 };
                 const context = {};
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(requests).toEqual([]);
             }
@@ -81,7 +85,7 @@ describe(
                     headers: {}
                 };
 
-                const {requests} = await mapper(null, context, sourcesCollection, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(null, context, sourcesCollection, mappingsService, targetsService);
 
                 expect(requests).toEqual([]);
             }
@@ -110,7 +114,7 @@ describe(
                 const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
                 const source = {_id: '123456789876', name: sourceName, flows: [{mappingId: mappingInserted, targetId: targetInserted}]};
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -147,7 +151,7 @@ describe(
                 const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
                 const source = {_id: '012345678947', name: sourceName, flows: [{mappingId: mappingInserted, targetId: targetInserted}]};
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -192,7 +196,7 @@ describe(
                     ]
                 };
 
-                const {requests, errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests, errors} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -255,7 +259,7 @@ describe(
                     ]
                 };
 
-                const {errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {errors} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(errors.errors)).toBe(true);
                 expect(errors.errors.length).toBe(2);
@@ -305,7 +309,7 @@ describe(
                     ]
                 };
 
-                const {errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {errors} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(errors.errors)).toBe(true);
                 expect(errors.errors.length).toBe(1);
@@ -343,7 +347,7 @@ describe(
                     flows: [{mappingId: '123456789087'}]
                 };
 
-                const {errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {errors} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(errors.errors)).toBe(true);
                 expect(errors.errors.length).toBe(1);
@@ -381,7 +385,7 @@ describe(
                     flows: []
                 };
 
-                const {requests, errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests, errors} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(0);
@@ -413,7 +417,7 @@ describe(
                     ]
                 };
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -452,7 +456,7 @@ describe(
                     ]
                 };
 
-                const {requests} = await mapper(source, context, mappingsCollection, targetsCollection);
+                const {requests} = await mapper(source, context, mappingsService, targetsService);
 
                 expect(Array.isArray(requests)).toBe(true);
                 expect(requests.length).toBe(1);
@@ -487,9 +491,11 @@ describe(
                 };
 
                 const fakeCollection = {findOne: jest.fn().mockRejectedValue(new Error('Mongo error'))};
+                mappingsService = buildMappingsService(fakeCollection);
+                const targetsService = buildTargetsService(fakeCollection);
 
                 try {
-                    await mapper(source, context, fakeCollection, fakeCollection);
+                    await mapper(source, context, mappingsService, targetsService);
                 }
                 catch (error) {
                     expect(error.message).toEqual('Mongo error');

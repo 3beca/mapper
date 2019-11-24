@@ -9,21 +9,29 @@ import {
     COLLECTION_TARGETS,
     COLLECTION_RESPONSES
 } from './database';
+import { buildSourcesService } from './services/sources';
+import { buildMappingsService } from './services/mappings';
+import { buildTargetsService } from './services/targets';
+import { buildResponsesService } from './services/responses';
 import logger from './logger';
 
 async function main() {
     const { port, host } = config.http;
     const { url, databaseName } = config.mongodb;
 
-    logger.info('starting mapper service');
+    logger.info('starting Mapper service');
 
     const dbClient = await connect(url);
     const db = await getAndSetupDatabase(dbClient, databaseName);
+    const sourcesService = buildSourcesService(db.collection(COLLECTION_SOURCES));
+    const mappingsService = buildMappingsService(db.collection(COLLECTION_MAPPINGS));
+    const targetsService = buildTargetsService(db.collection(COLLECTION_TARGETS));
+    const responsesService = buildResponsesService(db.collection(COLLECTION_RESPONSES));
     const server = buildServer(
-        db.collection(COLLECTION_SOURCES),
-        db.collection(COLLECTION_MAPPINGS),
-        db.collection(COLLECTION_TARGETS),
-        db.collection(COLLECTION_RESPONSES)
+        sourcesService,
+        mappingsService,
+        targetsService,
+        responsesService
     );
     await server.listen(port, host);
 

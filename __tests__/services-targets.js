@@ -1,25 +1,25 @@
 import {
     connect,
     getAndSetupDatabase,
-    COLLECTION_MAPPINGS
+    COLLECTION_TARGETS
 } from '../src/database';
 import config from '../src/config';
 import {
-    buildMappingsService
-} from '../src/services/mappings';
+    buildTargetsService
+} from '../src/services/targets';
 import { typeOf } from '../src/utils/error-encoder';
 import { ERROR_DATABASE } from '../src/errors';
 
 describe(
-    'getMappings should',
+    'getTargets should',
     () => {
         let dbClient, db, collection, service;
         beforeAll(
             async () => {
                 dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getmappings');
-                collection = db.collection(COLLECTION_MAPPINGS);
-                service = buildMappingsService(collection);
+                db = await getAndSetupDatabase(dbClient, 'test-getTargets');
+                collection = db.collection(COLLECTION_TARGETS);
+                service = buildTargetsService(collection);
             }
         );
 
@@ -32,10 +32,10 @@ describe(
         );
 
         it(
-            'return an empty array when no mappings',
+            'return an empty array when no targets',
             async () => {
-                const mappings = await service.getMappings();
-                expect(mappings).toEqual([]);
+                const targets = await service.getTargets();
+                expect(targets).toEqual([]);
             }
         );
 
@@ -43,10 +43,10 @@ describe(
             'return an Error array when database fails',
             async () => {
                 expect.assertions(1);
-                const service = buildMappingsService({});
+                const service = buildTargetsService({});
 
                 try {
-                    await service.getMappings();
+                    await service.getTargets();
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -55,40 +55,40 @@ describe(
         );
 
         it(
-            'return an array with all mappings',
+            'return an array with all targets',
             async () => {
-                const expectedMappings = [
+                const expectedtargets = [
                     {
-                        name: 'nameformapping1',
+                        name: 'nameforTargets1',
                         description: '',
                         template: ''
                     },
                     {
-                        name: 'nameformapping2',
+                        name: 'nameforTargets2',
                         description: '',
                         template: ''
                     }
                 ];
-                await collection.insertMany(expectedMappings);
+                await collection.insertMany(expectedtargets);
 
-                const mappings = await service.getMappings(collection);
+                const targets = await service.getTargets(collection);
 
-                expect(mappings).toEqual(expectedMappings);
+                expect(targets).toEqual(expectedtargets);
             }
         );
     }
 );
 
 describe(
-    'getMappingById should',
+    'getTargetById should',
     () => {
         let dbClient, db, collection, service;
         beforeAll(
             async () => {
                 dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getmapping-byid');
-                collection = db.collection(COLLECTION_MAPPINGS);
-                service = buildMappingsService(collection);
+                db = await getAndSetupDatabase(dbClient, 'test-getTargets-byid');
+                collection = db.collection(COLLECTION_TARGETS);
+                service = buildTargetsService(collection);
             }
         );
 
@@ -101,21 +101,21 @@ describe(
         );
 
         it(
-            'return null when undefined mapping id',
+            'return null when undefined Targets id',
             async () => {
-                const mappingId = undefined;
-                const mapping = await service.getMappingById(mappingId);
-                expect(mapping).toEqual(null);
+                const targetsId = undefined;
+                const targets = await service.getTargetById(targetsId);
+                expect(targets).toEqual(null);
             }
         );
 
         it(
-            'return Error when invalid mapping id',
+            'return Error when invalid Targets id',
             async () => {
                 expect.assertions(1);
-                const mappingId = 'invalidmappingid';
+                const targetsId = 'invalidTargetsid';
                 try {
-                    const mapping = await service.getMappingById(mappingId);
+                    await service.getTargetById(targetsId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -124,11 +124,11 @@ describe(
         );
 
         it(
-            'return null when mapping not found',
+            'return null when Targets not found',
             async () => {
-                const mappingId = '123456789098';
-                const mapping = await service.getMappingById(mappingId);
-                expect(mapping).toEqual(null);
+                const targetsId = '123456789098';
+                const targets = await service.getTargetById(targetsId);
+                expect(targets).toEqual(null);
             }
         );
 
@@ -136,11 +136,11 @@ describe(
             'return null when database fails',
             async () => {
                 expect.assertions(1);
-                const mappingId = '123456789098';
-                const service = buildMappingsService({});
+                const targetsId = '123456789098';
+                const service = buildTargetsService({});
 
                 try {
-                    await service.getMappingById(mappingId);
+                    await service.getTargetById(targetsId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -149,18 +149,18 @@ describe(
         );
 
         it(
-            'return the mapping from the id',
+            'return the Targets from the id',
             async () => {
-                const expectedMapping = {
-                        name: 'nameformapping1',
+                const expectedTargets = {
+                        name: 'nameforTargets1',
                         description: '',
                         template: ''
                     };
-                const { insertedId } = await collection.insertOne(expectedMapping);
+                const { insertedId } = await collection.insertOne(expectedTargets);
 
-                const mappings = await service.getMappingById(insertedId);
+                const targets = await service.getTargetById(insertedId);
 
-                expect(mappings).toEqual({...expectedMapping, _id: insertedId});
+                expect(targets).toEqual({...expectedTargets, _id: insertedId});
             }
         );
     }

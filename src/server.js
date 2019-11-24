@@ -14,10 +14,10 @@ import { buildAdminRoutes } from './routes/admin/admin.js';
 import { buildMapperRoutes } from './routes/mappers';
 
 export function buildServer(
-	sourcesCollection,
-    mappingsCollection,
-	targetsCollection,
-	responsesCollection
+	sourcesService,
+    mappingsService,
+	targetsService,
+	responsesService
 ) {
 	const app = fastify({
 		logger,
@@ -51,8 +51,8 @@ export function buildServer(
 	app.register(formBody);
 
 	// End points
-	app.register(buildAdminRoutes(), { prefix: '/admin' });
-	app.register(buildMapperRoutes(sourcesCollection, mappingsCollection, targetsCollection, responsesCollection), { prefix: '/mappers' });
+	app.register(buildAdminRoutes(sourcesService, mappingsService, targetsService, responsesService), { prefix: '/admin' });
+	app.register(buildMapperRoutes(sourcesService, mappingsService, targetsService, responsesService), { prefix: '/mappers' });
 
 	app.setNotFoundHandler({
 		preValidation: (req, reply, next) => {

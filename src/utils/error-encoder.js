@@ -15,3 +15,19 @@ export const encodeError = (error = {errors: []}, code, message = 'Generic error
 
     return {errors};
 };
+
+export const reThrowError = (errorType, error) => {
+    error.errorType = errorType;
+    throw error;
+};
+
+export const throwError = (errorType, message) => {
+    const error = new Error(message);
+    error.errorType = errorType;
+    throw error;
+};
+
+export const typeOf = (error, errorType) => {
+    if (error.errorType === errorType) return true;
+    return false;
+};

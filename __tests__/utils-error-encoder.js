@@ -1,4 +1,10 @@
-import { encodeError } from '../src/utils/error-encoder';
+import {
+    encodeError,
+    typeOf,
+    reThrowError,
+    throwError
+} from '../src/utils/error-encoder';
+import { AssertionError } from 'assert';
 
 describe(
     'Error encoder should',
@@ -234,6 +240,59 @@ describe(
                 const error = encodeError(plainError, {code, message});
 
                 expect(error).toEqual(expect.objectContaining(expectErrorResult));
+            }
+        );
+    }
+);
+
+describe(
+    'Error handler',
+    () => {
+        it(
+            'typeOf should return false if error do not have errorType',
+            () => {
+                expect(typeOf(new Error(), Symbol('Typed Error'))).toBe(false);
+            }
+        );
+
+        it(
+            'typeOf should return false if error do not match',
+            () => {
+                expect.assertions(1);
+                try {
+                    throwError(Symbol('Error 1'), 'error 1');
+                }
+                catch (error) {
+                    expect(typeOf(error, Symbol('Other Error'))).toBe(false);
+                }
+            }
+        );
+
+        it(
+            'typeOf should return true if same error',
+            () => {
+                expect.assertions(1);
+                const errorType = Symbol('Error Typed');
+                try {
+                    throwError(errorType, 'error 1');
+                }
+                catch (error) {
+                    expect(typeOf(error, errorType)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'reThrowError should throw an error with a typeError field',
+            () => {
+                expect.assertions(1);
+                const errorType = Symbol('Error Typed');
+                try {
+                    reThrowError(errorType, new Error('existing error'));
+                }
+                catch (error) {
+                    expect(typeOf(error, errorType)).toBe(true);
+                }
             }
         );
     }

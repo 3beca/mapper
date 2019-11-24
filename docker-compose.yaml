@@ -14,6 +14,6 @@ services:
       - MONGODB_URL=mongodb://mapper-mongodb:27017
       - HTTP_HOST=0.0.0.0
     ports:
-      - "8888:8888"
+      - "8889:8889"
 volumes:
   mapper-mongodb-storage:

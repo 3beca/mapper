@@ -1,5 +1,5 @@
 import packageInfo from '../../../package.json';
-import {buildAdminMappingsRoutes} from './admin-mappings';
+import {buildAdminMappingsRoutes} from './mappings';
 
 const checkHealthSchema = {
     tags: ['system'],

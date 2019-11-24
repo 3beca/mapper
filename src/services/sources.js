@@ -2,19 +2,19 @@ import { getId } from '../database';
 import { reThrowError } from '../utils/error-encoder';
 import { ERROR_DATABASE } from '../errors';
 
-export const buildMappingsService = (mappingCollection) => {
-    const getMappings = async () => {
+export const buildSourcesService = (sourceCollection) => {
+    const getSources = async () => {
         try {
-            return await mappingCollection.find({}).toArray();
+            return await sourceCollection.find({}).toArray();
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
         }
     };
 
-    const getMappingById = async (id) => {
+    const getSourceById = async (id) => {
         try {
-            return mappingCollection.findOne({_id: getId(id)});
+            return sourceCollection.findOne({_id: getId(id)});
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
@@ -22,9 +22,9 @@ export const buildMappingsService = (mappingCollection) => {
     };
 
     return {
-        getMappings,
-        getMappingById
+        getSources,
+        getSourceById
     };
 };
 
-export default buildMappingsService;
+export default buildSourcesService;

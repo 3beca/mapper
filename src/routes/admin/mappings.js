@@ -14,7 +14,7 @@ const listMappingSchema = {
 export function buildAdminMappingsRoutes() {
 
     function listMappings(request, reply) {
-        reply.code(200).res.end();
+        reply.code(200).send({});
     }
 
     return function(fastify, opts, next) {

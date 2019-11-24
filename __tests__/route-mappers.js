@@ -8,6 +8,10 @@ import {
     COLLECTION_TARGETS,
     COLLECTION_RESPONSES
 } from '../src/database';
+import { buildSourcesService } from '../src/services/sources';
+import { buildMappingsService } from '../src/services/mappings';
+import { buildTargetsService } from '../src/services/targets';
+import { buildResponsesService } from '../src/services/responses';
 import {
     ERROR_MAPPER,
     ERROR_DATABASE,
@@ -22,16 +26,20 @@ import {
 } from '../tests-utils/mock-requsts';
 
 describe('Route mapper', () => {
-    let dbClient, db, mappingsCollection, sourcesCollection, targetsCollection, responsesCollection, server;
+    let dbClient, db, mappingsCollection, mappingsService, sourcesCollection, sourcesService, targetsCollection, targetsService, responsesCollection, responsesService, server;
     beforeAll(
         async () => {
             dbClient = await connect(config.mongodb.url);
             db = await getAndSetupDatabase(dbClient, 'test-route-mapper');
             mappingsCollection = db.collection(COLLECTION_MAPPINGS);
+            mappingsService = buildMappingsService(mappingsCollection);
             sourcesCollection = db.collection(COLLECTION_SOURCES);
+            sourcesService = buildSourcesService(sourcesCollection);
             targetsCollection = db.collection(COLLECTION_TARGETS);
+            targetsService = buildTargetsService(targetsCollection);
             responsesCollection = db.collection(COLLECTION_RESPONSES);
-            server = buildServer(sourcesCollection, mappingsCollection, targetsCollection, responsesCollection);
+            responsesService = buildResponsesService(responsesCollection);
+            server = buildServer(sourcesService, mappingsService, targetsService, responsesService);
         }
     );
 
@@ -127,7 +135,7 @@ describe('Route mapper', () => {
                             'content-length': '36'
                         }
                     },
-                    details: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+                    details: 'Invalid sourceId '
                 }
             )
         );
@@ -140,7 +148,7 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer({}, {}, {});
+        const server = buildServer(sourcesService, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -171,7 +179,7 @@ describe('Route mapper', () => {
                             'content-length': '36'
                         }
                     },
-                    details: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+                    details: 'Invalid sourceId sourceidnotvalid'
                 }
             )
         );
@@ -184,7 +192,7 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer({}, {}, {});
+        const server = buildServer(sourcesService, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -215,20 +223,21 @@ describe('Route mapper', () => {
                             'content-length': '36'
                         }
                     },
-                    details: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+                    details: 'Invalid sourceId null'
                 }
             )
         );
     });
 
     it('should return 400 Error when mongodb fails', async () => {
-        const sourceId = '098765432103';
+        const sourceId = '5dd9ad23c6ba9f08af08b097';
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer({}, {}, {});
+        const sourcesService = buildSourcesService({});
+        const server = buildServer(sourcesService, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -259,7 +268,7 @@ describe('Route mapper', () => {
                             'content-length': '36'
                         }
                     },
-                    details: 'sourcesCollection.findOne is not a function'
+                    details: 'sourceCollection.findOne is not a function'
                 }
             )
         );
@@ -283,7 +292,6 @@ describe('Route mapper', () => {
             payload: context.body,
             headers: context.headers
         });
-
         expect(response.statusCode).toBe(400);
         expect(JSON.parse(response.payload)).toEqual(
             encodeError(
@@ -573,7 +581,8 @@ describe('Route mapper', () => {
             responseId: '123456789098'
         });
 
-        const serverWithoutResponseCollection = buildServer(sourcesCollection, mappingsCollection, targetsCollection, {});
+        const responsesService = buildResponsesService({});
+        const serverWithoutResponseCollection = buildServer(sourcesService, mappingsCollection, targetsService, responsesService);
         const response = await serverWithoutResponseCollection.inject({
             method: 'GET',
             url: '/mappers/' + sourceInserted,
@@ -609,7 +618,7 @@ describe('Route mapper', () => {
             responseId: 'invalidresponseid'
         });
 
-        const serverWithoutResponseCollection = buildServer(sourcesCollection, mappingsCollection, targetsCollection, {});
+        const serverWithoutResponseCollection = buildServer(sourcesService, mappingsCollection, targetsService, responsesService);
         const response = await serverWithoutResponseCollection.inject({
             method: 'GET',
             url: '/mappers/' + sourceInserted,

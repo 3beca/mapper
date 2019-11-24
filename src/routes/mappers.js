@@ -22,10 +22,10 @@ const mapperSchema = {
 };
 
 export const mapperFlow = (
-    sourcesCollection,
-    mappingsCollection,
-    targetsCollection,
-    responsesCollection,
+    sourcesService,
+    mappingsService,
+    targetsService,
+    responsesService,
 ) => async (request, reply) => {
     const sourceId = request.params.sourceId;
     const context = {
@@ -34,11 +34,7 @@ export const mapperFlow = (
         body: request.body,
         headers: request.headers
     };
-    let idMongo;
-    try {
-        idMongo = getId(sourceId);
-    }
-    catch (error) {
+    if (!sourceId || sourceId.length != 24) {
         return reply.code(400).headers(
             {
                 'content-type': 'application/json'
@@ -51,15 +47,14 @@ export const mapperFlow = (
                 {
                     sourceId: sourceId,
                     context: context,
-                    details: error.message
+                    details: `Invalid sourceId ${sourceId}`
                 }
             )
         );
     }
-
     let source;
     try {
-        source = await sourcesCollection.findOne({_id: idMongo});
+        source = await sourcesService.getSourceById(sourceId);
     }
     catch (error) {
         return reply.code(400).headers(
@@ -81,7 +76,7 @@ export const mapperFlow = (
     }
 
     try {
-        const {requests, errors} = await mapper(source, context, mappingsCollection, targetsCollection);
+        const {requests, errors} = await mapper(source, context, mappingsService, targetsService);
         const responses = !source.serial ? await requester(requests) : await requesterSerial(requests);
 
         if (!source.responseId) {
@@ -95,7 +90,7 @@ export const mapperFlow = (
 
         let responseMapping;
         try {
-            responseMapping = await responsesCollection.findOne({_id: getId(source.responseId)});
+            responseMapping = await responsesService.getResponseById(source.responseId);
             if (!responseMapping) throw new Error('Response Mapping not found');
         }
         catch (error) {
@@ -150,19 +145,18 @@ export const mapperFlow = (
 };
 
 export function buildMapperRoutes(
-    sourcesCollection,
-    mappingsCollection,
-    targetsCollection,
-    responsesCollection
+    sourcesService,
+    mappingsService,
+    targetsService,
+    responsesService
 ) {
     return function(fastify, opts, next) {
-        //fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: mapperSchema } }, mapperFlow);
         fastify.route({
             ...opts,
             method: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
             url: '/:sourceId',
             //schema: mapperSchema,
-            handler: mapperFlow(sourcesCollection, mappingsCollection, targetsCollection, responsesCollection)
+            handler: mapperFlow(sourcesService, mappingsService, targetsService, responsesService)
         });
         next();
     };
