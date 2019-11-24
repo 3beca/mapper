@@ -4,7 +4,11 @@ import {
     reThrowError,
     throwError
 } from '../src/utils/error-encoder';
-import { AssertionError } from 'assert';
+import {
+    ERROR_UNKNOWN,
+    ERROR_DATABASE,
+    findError
+} from '../src/errors';
 
 describe(
     'Error encoder should',
@@ -291,6 +295,49 @@ describe(
                     reThrowError(errorType, new Error('existing error'));
                 }
                 catch (error) {
+                    expect(typeOf(error, errorType)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'findError should return UNKNOWN if no errorType in Error',
+            () => {
+                const expectedError = ERROR_UNKNOWN;
+
+                const error = findError(new Error());
+
+                expect(error).toEqual(expectedError);
+            }
+        );
+
+        it(
+            'findError should return DATABASE_ERROR when errorType found',
+            () => {
+                expect.assertions(2);
+                const errorType = ERROR_DATABASE.type;
+                try {
+                    reThrowError(errorType, new Error('existing error'));
+                }
+                catch (error) {
+                    const errorFound = findError(error);
+                    expect(errorFound).toEqual(ERROR_DATABASE);
+                    expect(typeOf(error, errorType)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'findError should return UNKNOWN if no errorType in Error',
+            () => {
+                expect.assertions(2);
+                const errorType = Symbol('Error Not Defined');
+                try {
+                    reThrowError(errorType, new Error('existing error'));
+                }
+                catch (error) {
+                    const errorFound = findError(error);
+                    expect(errorFound).toEqual(ERROR_UNKNOWN);
                     expect(typeOf(error, errorType)).toBe(true);
                 }
             }
