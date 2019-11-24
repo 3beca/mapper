@@ -1,51 +1,48 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_MAPPINGS,
-    COLLECTION_SOURCES,
-    COLLECTION_TARGETS,
-    COLLECTION_RESPONSES
-} from '../src/database';
-import { buildSourcesService } from '../src/services/sources';
-import { buildMappingsService } from '../src/services/mappings';
-import { buildTargetsService } from '../src/services/targets';
+import { createDependencies } from '../src/dependencies';
+import { fakeDeps, overridedDeps } from '../tests-utils/dependencies';
 import { buildResponsesService } from '../src/services/responses';
+import { buildSourcesService } from '../src/services/sources';
 import {
     ERROR_MAPPER,
     ERROR_DATABASE,
     ERROR_SOURCE_ID
 } from '../src/errors';
 import { encodeError } from '../src/utils/error-encoder';
-import config from '../src/config';
 import {
     createPostRequest,
     createGetRequest,
     createDeleteRequest
 } from '../tests-utils/mock-requsts';
+import {
+    EMPTY_OBJECT
+} from '../tests-utils/dependencies';
 
 describe('Route mapper', () => {
-    let dbClient, db, mappingsCollection, mappingsService, sourcesCollection, sourcesService, targetsCollection, targetsService, responsesCollection, responsesService, server;
+    let deps, dbClient, mappingsCollection, sourcesCollection, targetsCollection, responsesCollection, server;
     beforeAll(
         async () => {
-            dbClient = await connect(config.mongodb.url);
-            db = await getAndSetupDatabase(dbClient, 'test-route-mapper');
-            mappingsCollection = db.collection(COLLECTION_MAPPINGS);
-            mappingsService = buildMappingsService(mappingsCollection);
-            sourcesCollection = db.collection(COLLECTION_SOURCES);
-            sourcesService = buildSourcesService(sourcesCollection);
-            targetsCollection = db.collection(COLLECTION_TARGETS);
-            targetsService = buildTargetsService(targetsCollection);
-            responsesCollection = db.collection(COLLECTION_RESPONSES);
-            responsesService = buildResponsesService(responsesCollection);
-            server = buildServer(sourcesService, mappingsService, targetsService, responsesService);
+            deps = await createDependencies({DBNAME: 'test-route-mapper'});
+            ({
+                dbClient,
+                mappingsCollection,
+                sourcesCollection,
+                targetsCollection,
+                responsesCollection
+            } = deps([
+                'dbClient',
+                'mappingsCollection',
+                'sourcesCollection',
+                'targetsCollection',
+                'responsesCollection'
+            ]));
+            server = buildServer(deps);
         }
     );
 
     afterAll(
         async () => {
-            db = null;
             await server.close();
             await dbClient.close();
         }
@@ -104,7 +101,6 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer({}, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -148,7 +144,6 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer(sourcesService, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -192,7 +187,6 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const server = buildServer(sourcesService, {}, {});
 
         const response = await server.inject({
             method: 'POST',
@@ -236,8 +230,9 @@ describe('Route mapper', () => {
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
-        const sourcesService = buildSourcesService({});
-        const server = buildServer(sourcesService, {}, {});
+        const sourcesService = buildSourcesService(EMPTY_OBJECT);
+        const overDeps = overridedDeps(deps, {sourcesService});
+        const server = buildServer(overDeps);
 
         const response = await server.inject({
             method: 'POST',
@@ -581,9 +576,11 @@ describe('Route mapper', () => {
             responseId: '123456789098'
         });
 
-        const responsesService = buildResponsesService({});
-        const serverWithoutResponseCollection = buildServer(sourcesService, mappingsCollection, targetsService, responsesService);
-        const response = await serverWithoutResponseCollection.inject({
+        const responsesService = buildResponsesService(EMPTY_OBJECT);
+        const overDeps = overridedDeps(deps, {responsesService});
+        const server = buildServer(overDeps);
+
+        const response = await server.inject({
             method: 'GET',
             url: '/mappers/' + sourceInserted,
             query: context.params,
@@ -617,9 +614,11 @@ describe('Route mapper', () => {
             flows: [],
             responseId: 'invalidresponseid'
         });
+        const responsesService = buildResponsesService(EMPTY_OBJECT);
+        const overDeps = overridedDeps(deps, {responsesService});
+        const server = buildServer(overDeps);
 
-        const serverWithoutResponseCollection = buildServer(sourcesService, mappingsCollection, targetsService, responsesService);
-        const response = await serverWithoutResponseCollection.inject({
+        const response = await server.inject({
             method: 'GET',
             url: '/mappers/' + sourceInserted,
             query: context.params,

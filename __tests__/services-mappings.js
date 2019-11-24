@@ -1,32 +1,27 @@
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_MAPPINGS
-} from '../src/database';
-import config from '../src/config';
-import {
-    buildMappingsService
-} from '../src/services/mappings';
+import { createDependencies } from '../src/dependencies';
 import { typeOf } from '../src/utils/error-encoder';
 import { ERROR_DATABASE } from '../src/errors';
+import { EMPTY_OBJECT } from '../tests-utils/dependencies';
+import { buildMappingsService } from '../src/services/mappings';
 
 describe(
     'getMappings should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getmappings');
-                collection = db.collection(COLLECTION_MAPPINGS);
-                service = buildMappingsService(collection);
+                const deps = await createDependencies({DBNAME: 'test-mapping-service-all'});
+                ({
+                    dbClient,
+                    mappingsCollection: collection,
+                    mappingsService: service
+                } = deps(['dbClient', 'mappingsCollection', 'mappingsService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );
@@ -43,10 +38,10 @@ describe(
             'return an Error array when database fails',
             async () => {
                 expect.assertions(1);
-                const service = buildMappingsService({});
+                const mappingsService = buildMappingsService(EMPTY_OBJECT);
 
                 try {
-                    await service.getMappings();
+                    await mappingsService.getMappings();
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -71,7 +66,7 @@ describe(
                 ];
                 await collection.insertMany(expectedMappings);
 
-                const mappings = await service.getMappings(collection);
+                const mappings = await service.getMappings();
 
                 expect(mappings).toEqual(expectedMappings);
             }
@@ -82,20 +77,21 @@ describe(
 describe(
     'getMappingById should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getmapping-byid');
-                collection = db.collection(COLLECTION_MAPPINGS);
-                service = buildMappingsService(collection);
+                const deps = await createDependencies({DBNAME: 'test-mapping-service-byId'});
+                ({
+                    dbClient,
+                    mappingsCollection: collection,
+                    mappingsService: service
+                } = deps(['dbClient', 'mappingsCollection', 'mappingsService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );
@@ -133,14 +129,14 @@ describe(
         );
 
         it(
-            'return null when database fails',
+            'return Error when database fails',
             async () => {
                 expect.assertions(1);
                 const mappingId = '123456789098';
-                const service = buildMappingsService({});
+                const mappingsService = buildMappingsService(EMPTY_OBJECT);
 
                 try {
-                    await service.getMappingById(mappingId);
+                    await mappingsService.getMappingById(mappingId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);

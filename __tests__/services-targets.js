@@ -1,9 +1,4 @@
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_TARGETS
-} from '../src/database';
-import config from '../src/config';
+import { createDependencies } from '../src/dependencies';
 import {
     buildTargetsService
 } from '../src/services/targets';
@@ -13,20 +8,21 @@ import { ERROR_DATABASE } from '../src/errors';
 describe(
     'getTargets should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getTargets');
-                collection = db.collection(COLLECTION_TARGETS);
-                service = buildTargetsService(collection);
+                const deps = await createDependencies({DBNAME: 'test-targets-service-all'});
+                ({
+                    dbClient,
+                    targetsCollection: collection,
+                    targetsService: service
+                } = deps(['dbClient', 'targetsCollection', 'targetsService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );
@@ -71,7 +67,7 @@ describe(
                 ];
                 await collection.insertMany(expectedtargets);
 
-                const targets = await service.getTargets(collection);
+                const targets = await service.getTargets();
 
                 expect(targets).toEqual(expectedtargets);
             }
@@ -82,20 +78,21 @@ describe(
 describe(
     'getTargetById should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getTargets-byid');
-                collection = db.collection(COLLECTION_TARGETS);
-                service = buildTargetsService(collection);
+                const deps = await createDependencies({DBNAME: 'test-targets-service-byid'});
+                ({
+                    dbClient,
+                    targetsCollection: collection,
+                    targetsService: service
+                } = deps(['dbClient', 'targetsCollection', 'targetsService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );

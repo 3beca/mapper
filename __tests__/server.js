@@ -1,6 +1,7 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
 import { encodeError } from '../src/utils/error-encoder';
+import { fakeDeps } from '../tests-utils/dependencies';
 import {
   ERROR_NOTFOUND,
   ERROR_UNKNOWN
@@ -10,7 +11,7 @@ describe('builServer', () => {
     let server;
 
     beforeEach(() => {
-        server = buildServer();
+        server = buildServer(fakeDeps());
     });
 
     afterEach(async () => {

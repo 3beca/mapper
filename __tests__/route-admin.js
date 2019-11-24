@@ -1,11 +1,12 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
+import { fakeDeps } from '../tests-utils/dependencies';
 
 describe('admin', () => {
     let server;
 
     beforeEach(() => {
-        server = buildServer();
+        server = buildServer(fakeDeps);
     });
 
     afterEach(async () => {

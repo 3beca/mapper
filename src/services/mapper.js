@@ -1,11 +1,9 @@
 import { encodeError } from '../utils/error-encoder';
-import { getId } from '../database';
 import {
     ERROR_TRANSFORM_SOURCE
 } from '../errors';
-import { transformSource } from './http-engine';
 
-export const mapper = async (source, context, mappingsService, targetsService) => {
+export const buildMapperService = (mappingsService, targetsService, httpEngineService) => async (source, context) => {
     if (!source) return {requests: []};
     const requests = [];
     let errors;
@@ -14,7 +12,7 @@ export const mapper = async (source, context, mappingsService, targetsService) =
         const target = await targetsService.getTargetById(targetId);
 
         try {
-            const request = await transformSource(context, mapping.template, target);
+            const request = await httpEngineService.transformSource(context, mapping.template, target);
             requests.push(request);
         }
         catch (error) {
@@ -34,3 +32,5 @@ export const mapper = async (source, context, mappingsService, targetsService) =
     }
     return {requests, errors};
 };
+
+export default buildMapperService;

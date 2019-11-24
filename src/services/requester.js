@@ -74,4 +74,6 @@ export const requesterSerial = async (requests) => {
     return responses;
 };
 
-export default requester;
+export const buildRequesterService = () => ({requester, requesterSerial});
+
+export default buildRequesterService;

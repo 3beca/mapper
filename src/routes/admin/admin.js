@@ -24,7 +24,7 @@ const versionSchema = {
     }
 };
 
-export function buildAdminRoutes() {
+export function buildAdminRoutes(deps) {
 
     function checkHealth(request, reply) {
         reply.code(204).res.end();
@@ -37,7 +37,7 @@ export function buildAdminRoutes() {
     return function(fastify, opts, next) {
         fastify.get('/check-health', { ...opts, ...{ logLevel: 'warn', schema: checkHealthSchema } }, checkHealth);
         fastify.get('/version', { ...opts, ...{ logLevel: 'warn', schema: versionSchema } }, version);
-        fastify.register(buildAdminMappingsRoutes(), { prefix: '/mappings' });
+        fastify.register(buildAdminMappingsRoutes(deps), { prefix: '/mappings' });
         next();
     };
 }

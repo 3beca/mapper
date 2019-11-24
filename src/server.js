@@ -13,12 +13,7 @@ import logger from './logger';
 import { buildAdminRoutes } from './routes/admin/admin.js';
 import { buildMapperRoutes } from './routes/mappers';
 
-export function buildServer(
-	sourcesService,
-    mappingsService,
-	targetsService,
-	responsesService
-) {
+export function buildServer(deps) {
 	const app = fastify({
 		logger,
 		trustProxy: config.trustProxy
@@ -51,8 +46,8 @@ export function buildServer(
 	app.register(formBody);
 
 	// End points
-	app.register(buildAdminRoutes(sourcesService, mappingsService, targetsService, responsesService), { prefix: '/admin' });
-	app.register(buildMapperRoutes(sourcesService, mappingsService, targetsService, responsesService), { prefix: '/mappers' });
+	app.register(buildAdminRoutes(deps), { prefix: '/admin' });
+	app.register(buildMapperRoutes(deps), { prefix: '/mappers' });
 
 	app.setNotFoundHandler({
 		preValidation: (req, reply, next) => {

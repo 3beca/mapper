@@ -1,6 +1,6 @@
 import { getId } from '../database';
-import { reThrowError } from '../utils/error-encoder';
-import { ERROR_DATABASE } from '../errors';
+import { reThrowError, throwError } from '../utils/error-encoder';
+import { ERROR_DATABASE, ERROR_MAPPING_ID } from '../errors';
 
 export const buildMappingsService = (mappingCollection) => {
     const getMappings = async () => {
@@ -13,6 +13,7 @@ export const buildMappingsService = (mappingCollection) => {
     };
 
     const getMappingById = async (id) => {
+        if (!id) return null;
         try {
             return mappingCollection.findOne({_id: getId(id)});
         }

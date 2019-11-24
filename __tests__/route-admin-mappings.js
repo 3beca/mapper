@@ -1,45 +1,40 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_MAPPINGS
-} from '../src/database';
-import config from '../src/config';
-import {
-    ERROR_DATABASE
-} from '../src/errors';
+import { createDependencies } from '../src/dependencies';
+import { ERROR_DATABASE } from '../src/errors';
+import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
+import { buildMappingsService } from '../src/services/mappings';
 
 describe('admin', () => {
-    let server, dbClient, db, collection;
+    let server, deps, dbClient, mappingsCollection;
     beforeAll(
         async () => {
-            dbClient = await connect(config.mongodb.url);
-            db = await getAndSetupDatabase(dbClient, 'test-getmapping-byid');
-            collection = db.collection(COLLECTION_MAPPINGS);
+            deps = await createDependencies({DBNAME: 'test-getmapping-byid'});
+            ({dbClient, mappingsCollection} = deps(['dbClient', 'mappingsCollection']));
         }
     );
 
     afterAll(
         async () => {
-            await collection.deleteMany();
-            db = null;
+            await mappingsCollection.deleteMany();
             await dbClient.close();
         }
     );
     beforeEach(() => {
-        server = buildServer();
+        server = buildServer(deps);
     });
 
     afterEach(async () => {
         await server.close();
     });
 
-    describe.skip('[GET] /mappings', () => {
+    describe('[GET] /mappings', () => {
 
         it('should return 400 Error when mongodb fails', async () => {
-            const server = buildServer({}, {}, {});
+            const mappingsService = buildMappingsService(EMPTY_OBJECT);
+            const overDeps = overridedDeps(deps, {mappingsService});
+            const server = buildServer(overDeps);
 
             const response = await server.inject({
                 method: 'GET',
@@ -53,7 +48,7 @@ describe('admin', () => {
                     ERROR_DATABASE.code,
                     ERROR_DATABASE.message,
                     {
-                        details: 'sourcesCollection.findOne is not a function'
+                        details: 'mappingCollection.find is not a function'
                     }
                 )
             );
@@ -69,7 +64,7 @@ describe('admin', () => {
             expect(JSON.parse(response.payload)).toEqual([]);
         });
 
-        it('should return the list of mapping in the system', async () => {
+        it('should return the list of mapping in database', async () => {
             const expectedMappings = [
                 {
                     name: 'nameformapping1',
@@ -82,15 +77,14 @@ describe('admin', () => {
                     template: ''
                 }
             ];
-            const result = await collection.insertMany(expectedMappings);
-            console.log('Results', result);
+            const result = await mappingsCollection.insertMany(expectedMappings);
 
             const response = await server.inject({
                 method: 'GET',
                 url: '/admin/mappings'
             });
             expect(response.statusCode).toBe(200);
-            expect(JSON.parse(response.payload)).toEqual(result.ops);
+            expect(JSON.parse(response.payload)).toEqual(result.ops.map((mapping) => ({...mapping, _id: mapping._id + ''})));
         });
     });
 });

@@ -1,9 +1,4 @@
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_SOURCES
-} from '../src/database';
-import config from '../src/config';
+import { createDependencies } from '../src/dependencies';
 import {
     buildSourcesService
 } from '../src/services/sources';
@@ -13,20 +8,21 @@ import { ERROR_DATABASE } from '../src/errors';
 describe(
     'getsources should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getsources');
-                collection = db.collection(COLLECTION_SOURCES);
-                service = buildSourcesService(collection);
+                const deps = await createDependencies({DBNAME: 'test-sources-service-all'});
+                ({
+                    dbClient,
+                    sourcesCollection: collection,
+                    sourcesService: service
+                } = deps(['dbClient', 'sourcesCollection', 'sourcesService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );
@@ -71,7 +67,7 @@ describe(
                 ];
                 await collection.insertMany(expectedsources);
 
-                const sources = await service.getSources(collection);
+                const sources = await service.getSources();
 
                 expect(sources).toEqual(expectedsources);
             }
@@ -82,20 +78,21 @@ describe(
 describe(
     'getSourceById should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getsource-byid');
-                collection = db.collection(COLLECTION_SOURCES);
-                service = buildSourcesService(collection);
+                const deps = await createDependencies({DBNAME: 'test-sources-service-byid'});
+                ({
+                    dbClient,
+                    sourcesCollection: collection,
+                    sourcesService: service
+                } = deps(['dbClient', 'sourcesCollection', 'sourcesService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );

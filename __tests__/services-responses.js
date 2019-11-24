@@ -1,9 +1,4 @@
-import {
-    connect,
-    getAndSetupDatabase,
-    COLLECTION_RESPONSES
-} from '../src/database';
-import config from '../src/config';
+import { createDependencies } from '../src/dependencies';
 import {
     buildResponsesService
 } from '../src/services/responses';
@@ -13,20 +8,21 @@ import { ERROR_DATABASE } from '../src/errors';
 describe(
     'getresponses should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getresponses');
-                collection = db.collection(COLLECTION_RESPONSES);
-                service = buildResponsesService(collection);
+                const deps = await createDependencies({DBNAME: 'test-responses-service-all'});
+                ({
+                    dbClient,
+                    responsesCollection: collection,
+                    responsesService: service
+                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );
@@ -71,7 +67,7 @@ describe(
                 ];
                 await collection.insertMany(expectedresponses);
 
-                const responses = await service.getResponses(collection);
+                const responses = await service.getResponses();
 
                 expect(responses).toEqual(expectedresponses);
             }
@@ -82,20 +78,21 @@ describe(
 describe(
     'getResponseById should',
     () => {
-        let dbClient, db, collection, service;
+        let dbClient, collection, service;
         beforeAll(
             async () => {
-                dbClient = await connect(config.mongodb.url);
-                db = await getAndSetupDatabase(dbClient, 'test-getresponse-byid');
-                collection = db.collection(COLLECTION_RESPONSES);
-                service = buildResponsesService(collection);
+                const deps = await createDependencies({DBNAME: 'test-responses-service-byid'});
+                ({
+                    dbClient,
+                    responsesCollection: collection,
+                    responsesService: service
+                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
             }
         );
 
         afterAll(
             async () => {
                 await collection.deleteMany();
-                db = null;
                 await dbClient.close();
             }
         );

@@ -88,3 +88,10 @@ export const transformResponse = async (context = {}, response) => {
     }
     return {status, headers, body: bodyString};
 };
+
+export const buildHttpEngineService = () => ({
+    transformSource,
+    transformResponse
+});
+
+export default buildHttpEngineService;
