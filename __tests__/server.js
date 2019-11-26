@@ -7,7 +7,7 @@ import {
   ERROR_UNKNOWN
 } from '../src/errors';
 
-describe.skip('builServer', () => {
+describe('builServer', () => {
     let server;
 
     beforeEach(() => {

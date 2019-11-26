@@ -1,5 +1,5 @@
 import { createDependencies } from '../src/dependencies';
-describe.skip(
+describe(
     'createdependencies should',
     () => {
         it(
