@@ -9,6 +9,7 @@ describe(
                 const dependencies = await createDependencies();
 
                 const deps = dependencies(['dbClient', 'db', 'sourcesService', 'mappingsService', 'targetsService', 'responsesService', 'mapperService']);
+                await deps.dbClient.close();
 
                 expect(deps).toEqual({
                     dbClient: expect.any(Object),
@@ -33,6 +34,7 @@ describe(
                 );
 
                 const deps = dependencies(['dbClient', 'db', 'sourcesService', 'mappingsService', 'targetsService', 'responsesService']);
+                await deps.dbClient.close();
 
                 expect(deps).toEqual({
                     dbClient: expect.any(Object),
@@ -56,6 +58,7 @@ describe(
                 );
 
                 const deps = dependencies();
+                await deps.dbClient.close();
 
                 expect(deps).toEqual({});
             }
@@ -72,6 +75,7 @@ describe(
                 );
 
                 const deps = dependencies(['notloadeddependency']);
+                await deps.dbClient.close();
 
                 expect(deps).toEqual({});
             }
