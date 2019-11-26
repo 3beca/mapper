@@ -6,7 +6,7 @@ import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
 import { buildMappingsService } from '../src/services/mappings';
 
-describe.skip('admin', () => {
+describe('admin', () => {
     let server, deps, dbClient, mappingsCollection;
     beforeAll(
         async () => {

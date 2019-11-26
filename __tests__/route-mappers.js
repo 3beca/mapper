@@ -19,7 +19,7 @@ import {
     EMPTY_OBJECT
 } from '../tests-utils/dependencies';
 
-describe.skip('Route mapper', () => {
+describe('Route mapper', () => {
     let deps, dbClient, mappingsCollection, sourcesCollection, targetsCollection, responsesCollection, server;
     beforeAll(
         async () => {

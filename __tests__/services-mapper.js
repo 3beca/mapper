@@ -3,7 +3,7 @@ import { buildMapperService } from '../src/services/mapper';
 import { buildMappingsService } from '../src/services/mappings';
 import { buildTargetsService } from '../src/services/targets';
 
-describe.skip(
+describe(
     'mapper service should',
     () => {
         let deps,
