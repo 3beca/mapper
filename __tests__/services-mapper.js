@@ -15,10 +15,12 @@ describe(
             async () => {
                 deps = await createDependencies({DBNAME: 'test-mapper-service'});
                 ({
+                    dbClient,
                     mappingsCollection,
                     targetsCollection,
                     mapperService
                 } = deps([
+                    'dbClient',
                     'mappingsCollection',
                     'targetsCollection',
                     'mapperService'
