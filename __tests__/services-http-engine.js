@@ -3,7 +3,7 @@ import {
     transformResponse
 } from '../src/services/http-engine';
 
-describe.skip(
+describe(
     'Http Engine transformSource',
     () => {
         it(
@@ -411,7 +411,7 @@ describe.skip(
     }
 );
 
-describe.skip(
+describe(
     'Http Engine transformResponse',
     () => {
         it(

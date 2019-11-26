@@ -10,7 +10,7 @@ import {
     findError
 } from '../src/errors';
 
-describe.skip(
+describe(
     'Error encoder should',
     () => {
         it(
@@ -249,7 +249,7 @@ describe.skip(
     }
 );
 
-describe.skip(
+describe(
     'Error handler',
     () => {
         it(

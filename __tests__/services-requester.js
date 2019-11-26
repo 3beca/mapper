@@ -6,7 +6,7 @@ import {
     createDeleteRequest
 } from '../tests-utils/mock-requsts';
 
-describe.skip(
+describe(
     'requester service should',
     () => {
         it(
@@ -205,7 +205,7 @@ describe.skip(
     }
 );
 
-describe.skip(
+describe(
     'requesterSerial service should',
     () => {
         it(
