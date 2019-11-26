@@ -9,7 +9,6 @@ describe(
                 const dependencies = await createDependencies();
 
                 const deps = dependencies(['dbClient', 'db', 'sourcesService', 'mappingsService', 'targetsService', 'responsesService', 'mapperService']);
-                await deps.dbClient.close();
 
                 expect(deps).toEqual({
                     dbClient: expect.any(Object),
@@ -20,6 +19,8 @@ describe(
                     responsesService: expect.any(Object),
                     mapperService: expect.any(Function)
                 });
+                const depsDb = dependencies(['dbClient']);
+                await depsDb.dbClient.close();
             }
         );
 
@@ -34,7 +35,6 @@ describe(
                 );
 
                 const deps = dependencies(['dbClient', 'db', 'sourcesService', 'mappingsService', 'targetsService', 'responsesService']);
-                await deps.dbClient.close();
 
                 expect(deps).toEqual({
                     dbClient: expect.any(Object),
@@ -44,6 +44,8 @@ describe(
                     targetsService: expect.any(Object),
                     responsesService: expect.any(Object)
                 });
+                const depsDb = dependencies(['dbClient']);
+                await depsDb.dbClient.close();
             }
         );
 
@@ -58,9 +60,10 @@ describe(
                 );
 
                 const deps = dependencies();
-                await deps.dbClient.close();
 
                 expect(deps).toEqual({});
+                const depsDb = dependencies(['dbClient']);
+                await depsDb.dbClient.close();
             }
         );
 
@@ -75,9 +78,10 @@ describe(
                 );
 
                 const deps = dependencies(['notloadeddependency']);
-                await deps.dbClient.close();
 
                 expect(deps).toEqual({});
+                const depsDb = dependencies(['dbClient']);
+                await depsDb.dbClient.close();
             }
         );
     }
