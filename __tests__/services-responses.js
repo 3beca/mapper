@@ -1,22 +1,22 @@
 import { createDependencies } from '../src/dependencies';
 import {
-    buildSourcesService
-} from '../src/services/sources';
+    buildResponsesService
+} from '../src/services/responses';
 import { typeOf } from '../src/utils/error-encoder';
 import { ERROR_DATABASE } from '../src/errors';
 
-describe.skip(
-    'getsources should',
+describe(
+    'getresponses should',
     () => {
         let dbClient, collection, service;
         beforeAll(
             async () => {
-                const deps = await createDependencies({DBNAME: 'test-sources-service-all'});
+                const deps = await createDependencies({DBNAME: 'test-responses-service-all'});
                 ({
                     dbClient,
-                    sourcesCollection: collection,
-                    sourcesService: service
-                } = deps(['dbClient', 'sourcesCollection', 'sourcesService']));
+                    responsesCollection: collection,
+                    responsesService: service
+                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
             }
         );
 
@@ -33,10 +33,10 @@ describe.skip(
         );
 
         it(
-            'return an empty array when no sources',
+            'return an empty array when no responses',
             async () => {
-                const sources = await service.getSources();
-                expect(sources).toEqual([]);
+                const responses = await service.getResponses();
+                expect(responses).toEqual([]);
             }
         );
 
@@ -44,10 +44,10 @@ describe.skip(
             'return an Error array when database fails',
             async () => {
                 expect.assertions(1);
-                const service = buildSourcesService({});
+                const service = buildResponsesService({});
 
                 try {
-                    await service.getSources();
+                    await service.getResponses();
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -56,42 +56,42 @@ describe.skip(
         );
 
         it(
-            'return an array with all sources',
+            'return an array with all responses',
             async () => {
-                const expectedsources = [
+                const expectedresponses = [
                     {
-                        name: 'nameforsource1',
+                        name: 'nameforresponse1',
                         description: '',
                         template: ''
                     },
                     {
-                        name: 'nameforsource2',
+                        name: 'nameforresponse2',
                         description: '',
                         template: ''
                     }
                 ];
-                await collection.insertMany(expectedsources);
+                await collection.insertMany(expectedresponses);
 
-                const sources = await service.getSources();
+                const responses = await service.getResponses();
 
-                expect(sources).toEqual(expectedsources);
+                expect(responses).toEqual(expectedresponses);
             }
         );
     }
 );
 
-describe.skip(
-    'getSourceById should',
+describe(
+    'getResponseById should',
     () => {
         let dbClient, collection, service;
         beforeAll(
             async () => {
-                const deps = await createDependencies({DBNAME: 'test-sources-service-byid'});
+                const deps = await createDependencies({DBNAME: 'test-responses-service-byid'});
                 ({
                     dbClient,
-                    sourcesCollection: collection,
-                    sourcesService: service
-                } = deps(['dbClient', 'sourcesCollection', 'sourcesService']));
+                    responsesCollection: collection,
+                    responsesService: service
+                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
             }
         );
 
@@ -108,21 +108,21 @@ describe.skip(
         );
 
         it(
-            'return null when undefined source id',
+            'return null when undefined response id',
             async () => {
-                const sourceId = undefined;
-                const source = await service.getSourceById(sourceId);
-                expect(source).toEqual(null);
+                const responseId = undefined;
+                const response = await service.getResponseById(responseId);
+                expect(response).toEqual(null);
             }
         );
 
         it(
-            'return Error when invalid source id',
+            'return Error when invalid response id',
             async () => {
                 expect.assertions(1);
-                const sourceId = 'invalidsourceid';
+                const responseId = 'invalidresponseid';
                 try {
-                    const source = await service.getSourceById(sourceId);
+                    const response = await service.getResponseById(responseId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -131,11 +131,11 @@ describe.skip(
         );
 
         it(
-            'return null when source not found',
+            'return null when response not found',
             async () => {
-                const sourceId = '123456789098';
-                const source = await service.getSourceById(sourceId);
-                expect(source).toEqual(null);
+                const responseId = '123456789098';
+                const response = await service.getResponseById(responseId);
+                expect(response).toEqual(null);
             }
         );
 
@@ -143,11 +143,11 @@ describe.skip(
             'return null when database fails',
             async () => {
                 expect.assertions(1);
-                const sourceId = '123456789098';
-                const service = buildSourcesService({});
+                const responseId = '123456789098';
+                const service = buildResponsesService({});
 
                 try {
-                    await service.getSourceById(sourceId);
+                    await service.getResponseById(responseId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -156,18 +156,18 @@ describe.skip(
         );
 
         it(
-            'return the source from the id',
+            'return the response from the id',
             async () => {
-                const expectedsource = {
-                        name: 'nameforsource1',
+                const expectedresponse = {
+                        name: 'nameforresponse1',
                         description: '',
                         template: ''
                     };
-                const { insertedId } = await collection.insertOne(expectedsource);
+                const { insertedId } = await collection.insertOne(expectedresponse);
 
-                const sources = await service.getSourceById(insertedId);
+                const responses = await service.getResponseById(insertedId);
 
-                expect(sources).toEqual({...expectedsource, _id: insertedId});
+                expect(responses).toEqual({...expectedresponse, _id: insertedId});
             }
         );
     }

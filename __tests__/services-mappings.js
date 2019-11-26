@@ -4,7 +4,7 @@ import { ERROR_DATABASE } from '../src/errors';
 import { EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { buildMappingsService } from '../src/services/mappings';
 
-describe.skip(
+describe(
     'getMappings should',
     () => {
         let dbClient, collection, service;
@@ -79,7 +79,7 @@ describe.skip(
     }
 );
 
-describe.skip(
+describe(
     'getMappingById should',
     () => {
         let dbClient, collection, service;

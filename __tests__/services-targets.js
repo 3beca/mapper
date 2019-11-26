@@ -1,22 +1,22 @@
 import { createDependencies } from '../src/dependencies';
 import {
-    buildResponsesService
-} from '../src/services/responses';
+    buildTargetsService
+} from '../src/services/targets';
 import { typeOf } from '../src/utils/error-encoder';
 import { ERROR_DATABASE } from '../src/errors';
 
-describe.skip(
-    'getresponses should',
+describe(
+    'getTargets should',
     () => {
         let dbClient, collection, service;
         beforeAll(
             async () => {
-                const deps = await createDependencies({DBNAME: 'test-responses-service-all'});
+                const deps = await createDependencies({DBNAME: 'test-targets-service-all'});
                 ({
                     dbClient,
-                    responsesCollection: collection,
-                    responsesService: service
-                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
+                    targetsCollection: collection,
+                    targetsService: service
+                } = deps(['dbClient', 'targetsCollection', 'targetsService']));
             }
         );
 
@@ -33,10 +33,10 @@ describe.skip(
         );
 
         it(
-            'return an empty array when no responses',
+            'return an empty array when no targets',
             async () => {
-                const responses = await service.getResponses();
-                expect(responses).toEqual([]);
+                const targets = await service.getTargets();
+                expect(targets).toEqual([]);
             }
         );
 
@@ -44,10 +44,10 @@ describe.skip(
             'return an Error array when database fails',
             async () => {
                 expect.assertions(1);
-                const service = buildResponsesService({});
+                const service = buildTargetsService({});
 
                 try {
-                    await service.getResponses();
+                    await service.getTargets();
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -56,42 +56,42 @@ describe.skip(
         );
 
         it(
-            'return an array with all responses',
+            'return an array with all targets',
             async () => {
-                const expectedresponses = [
+                const expectedtargets = [
                     {
-                        name: 'nameforresponse1',
+                        name: 'nameforTargets1',
                         description: '',
                         template: ''
                     },
                     {
-                        name: 'nameforresponse2',
+                        name: 'nameforTargets2',
                         description: '',
                         template: ''
                     }
                 ];
-                await collection.insertMany(expectedresponses);
+                await collection.insertMany(expectedtargets);
 
-                const responses = await service.getResponses();
+                const targets = await service.getTargets();
 
-                expect(responses).toEqual(expectedresponses);
+                expect(targets).toEqual(expectedtargets);
             }
         );
     }
 );
 
-describe.skip(
-    'getResponseById should',
+describe(
+    'getTargetById should',
     () => {
         let dbClient, collection, service;
         beforeAll(
             async () => {
-                const deps = await createDependencies({DBNAME: 'test-responses-service-byid'});
+                const deps = await createDependencies({DBNAME: 'test-targets-service-byid'});
                 ({
                     dbClient,
-                    responsesCollection: collection,
-                    responsesService: service
-                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
+                    targetsCollection: collection,
+                    targetsService: service
+                } = deps(['dbClient', 'targetsCollection', 'targetsService']));
             }
         );
 
@@ -108,21 +108,21 @@ describe.skip(
         );
 
         it(
-            'return null when undefined response id',
+            'return null when undefined Targets id',
             async () => {
-                const responseId = undefined;
-                const response = await service.getResponseById(responseId);
-                expect(response).toEqual(null);
+                const targetsId = undefined;
+                const targets = await service.getTargetById(targetsId);
+                expect(targets).toEqual(null);
             }
         );
 
         it(
-            'return Error when invalid response id',
+            'return Error when invalid Targets id',
             async () => {
                 expect.assertions(1);
-                const responseId = 'invalidresponseid';
+                const targetsId = 'invalidTargetsid';
                 try {
-                    const response = await service.getResponseById(responseId);
+                    await service.getTargetById(targetsId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -131,11 +131,11 @@ describe.skip(
         );
 
         it(
-            'return null when response not found',
+            'return null when Targets not found',
             async () => {
-                const responseId = '123456789098';
-                const response = await service.getResponseById(responseId);
-                expect(response).toEqual(null);
+                const targetsId = '123456789098';
+                const targets = await service.getTargetById(targetsId);
+                expect(targets).toEqual(null);
             }
         );
 
@@ -143,11 +143,11 @@ describe.skip(
             'return null when database fails',
             async () => {
                 expect.assertions(1);
-                const responseId = '123456789098';
-                const service = buildResponsesService({});
+                const targetsId = '123456789098';
+                const service = buildTargetsService({});
 
                 try {
-                    await service.getResponseById(responseId);
+                    await service.getTargetById(targetsId);
                 }
                 catch (error) {
                     expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
@@ -156,18 +156,18 @@ describe.skip(
         );
 
         it(
-            'return the response from the id',
+            'return the Targets from the id',
             async () => {
-                const expectedresponse = {
-                        name: 'nameforresponse1',
+                const expectedTargets = {
+                        name: 'nameforTargets1',
                         description: '',
                         template: ''
                     };
-                const { insertedId } = await collection.insertOne(expectedresponse);
+                const { insertedId } = await collection.insertOne(expectedTargets);
 
-                const responses = await service.getResponseById(insertedId);
+                const targets = await service.getTargetById(insertedId);
 
-                expect(responses).toEqual({...expectedresponse, _id: insertedId});
+                expect(targets).toEqual({...expectedTargets, _id: insertedId});
             }
         );
     }
