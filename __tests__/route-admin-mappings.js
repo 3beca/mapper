@@ -6,7 +6,7 @@ import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
 import { buildMappingsService } from '../src/services/mappings';
 
-describe('admin', () => {
+describe.skip('admin', () => {
     let server, deps, dbClient, mappingsCollection;
     beforeAll(
         async () => {
@@ -17,16 +17,16 @@ describe('admin', () => {
 
     afterAll(
         async () => {
-            await mappingsCollection.deleteMany();
             await dbClient.close();
         }
     );
-    beforeEach(() => {
+    beforeEach(async () => {
         server = buildServer(deps);
     });
 
     afterEach(async () => {
         await server.close();
+        await mappingsCollection.deleteMany();
     });
 
     describe('[GET] /mappings', () => {

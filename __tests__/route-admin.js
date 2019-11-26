@@ -2,7 +2,7 @@ jest.mock('pino');
 import { buildServer } from '../src/server';
 import { fakeDeps } from '../tests-utils/dependencies';
 
-describe('admin', () => {
+describe.skip('admin', () => {
     let server;
 
     beforeEach(() => {

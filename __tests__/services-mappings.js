@@ -4,7 +4,7 @@ import { ERROR_DATABASE } from '../src/errors';
 import { EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { buildMappingsService } from '../src/services/mappings';
 
-describe(
+describe.skip(
     'getMappings should',
     () => {
         let dbClient, collection, service;
@@ -19,9 +19,14 @@ describe(
             }
         );
 
-        afterAll(
+        afterEach(
             async () => {
                 await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
                 await dbClient.close();
             }
         );
@@ -74,7 +79,7 @@ describe(
     }
 );
 
-describe(
+describe.skip(
     'getMappingById should',
     () => {
         let dbClient, collection, service;
@@ -89,9 +94,14 @@ describe(
             }
         );
 
-        afterAll(
+        afterEach(
             async () => {
                 await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
                 await dbClient.close();
             }
         );

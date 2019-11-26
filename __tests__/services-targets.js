@@ -5,7 +5,7 @@ import {
 import { typeOf } from '../src/utils/error-encoder';
 import { ERROR_DATABASE } from '../src/errors';
 
-describe(
+describe.skip(
     'getTargets should',
     () => {
         let dbClient, collection, service;
@@ -20,9 +20,14 @@ describe(
             }
         );
 
-        afterAll(
+        afterEach(
             async () => {
                 await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
                 await dbClient.close();
             }
         );
@@ -75,7 +80,7 @@ describe(
     }
 );
 
-describe(
+describe.skip(
     'getTargetById should',
     () => {
         let dbClient, collection, service;
@@ -90,9 +95,14 @@ describe(
             }
         );
 
-        afterAll(
+        afterEach(
             async () => {
                 await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
                 await dbClient.close();
             }
         );
