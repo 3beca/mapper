@@ -1,8 +1,7 @@
 import { getId } from '../database';
 import { reThrowError, throwError } from '../utils/error-encoder';
-import { 
+import {
     ERROR_DATABASE,
-    ERROR_MAPPING_ID,
     ERROR_MAPPING_FORMAT
 } from '../errors';
 

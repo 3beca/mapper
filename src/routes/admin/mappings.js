@@ -103,5 +103,4 @@ export function buildAdminMappingsRoutes(deps) {
         fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: createMappingSchema }}, createMapping);
         next();
     };
-};
-
+}
