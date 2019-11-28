@@ -1,12 +1,32 @@
 import { Liquid } from 'liquidjs';
 import { applyProxy } from '../utils/apply-proxy';
 import { hasContentTypeJson } from '../utils/parse-headers';
+import { throwError } from '../utils/error-encoder';
+import { ERROR_MAPPING_FORMAT, ERROR_TRANSFORM_SOURCE, ERROR_TRANSFORM_RESPONSE } from '../errors';
 
 const liquidEngine = new Liquid();
 
 const parseTemplate = async (source, template) => {
     if (!template) return undefined;
     return await liquidEngine.parseAndRender(template, source);
+};
+
+export const checkTemplate = async (context, template, isJsonObject) => {
+    const sourceBody = {
+        params: applyProxy(context.params || {}, 'null'),
+        body: applyProxy(context.body || {}, 'null'),
+        headers: applyProxy(context.headers || {}, 'null')
+    };
+    const body = await parseTemplate(sourceBody, template);
+    if (isJsonObject) {
+        try {
+            JSON.parse(body);
+        }
+        catch (error) {
+            throwError(ERROR_MAPPING_FORMAT.type, 'Error parsing body from mapping template: ' + error.message + ', body: ' + body);
+        }
+    }
+    return body;
 };
 
 export const transformSource = async (context = {}, template, target) => {
@@ -18,7 +38,7 @@ export const transformSource = async (context = {}, template, target) => {
         // eslint-disable-next-line no-new
         new URL(url);
     } catch (error) {
-        throw new Error('Error parsing url from mapping template: ' + error.message);
+        throwError(ERROR_TRANSFORM_SOURCE.type, 'Error parsing url from mapping template: ' + error.message);
     }
 
     const headersString = await parseTemplate(context, target.headers);
@@ -27,24 +47,10 @@ export const transformSource = async (context = {}, template, target) => {
         headers = headersString ? JSON.parse(headersString) : undefined;
     }
     catch (error) {
-        throw new Error('Error parsing target headers: ' + error.message);
+        throwError(ERROR_TRANSFORM_SOURCE.type, 'Error parsing target headers: ' + error.message);
     }
     if (!template) return {method, url, headers};
-
-    const sourceBody = {
-        params: applyProxy(context.params || {}, 'null'),
-        body: applyProxy(context.body || {}, 'null'),
-        headers: applyProxy(context.headers || {}, 'null')
-    };
-    const body = await parseTemplate(sourceBody, template);
-    if (hasContentTypeJson(headers)) {
-        try {
-            JSON.parse(body);
-        }
-        catch (error) {
-            throw new Error('Error parsing body from mapping template: ' + error.message + ', body: ' + body);
-        }
-    }
+    const body = await checkTemplate(context, template, hasContentTypeJson(headers));
     return {method, url, body, headers};
 };
 
@@ -55,9 +61,9 @@ export const transformResponse = async (context = {}, response) => {
     let status;
     try {
         status = Number(statusText);
-        if (status !== status || status < 100 || status >= 600) throw new Error(`status ${statusText} cannot be transformed to a valid status`);
+        if (status !== status || status < 100 || status >= 600) throwError(ERROR_TRANSFORM_RESPONSE.type, `status ${statusText} cannot be transformed to a valid status`);
     } catch (error) {
-        throw new Error('Error parsing status from mapping template: ' + error.message);
+        throwError(ERROR_TRANSFORM_RESPONSE.type, 'Error parsing status from mapping template: ' + error.message);
     }
 
     const headersString = await parseTemplate(context, response.headers);
@@ -66,7 +72,7 @@ export const transformResponse = async (context = {}, response) => {
         headers = headersString ? JSON.parse(headersString) : undefined;
     }
     catch (error) {
-        throw new Error('Error parsing response headers: ' + error.message);
+        throwError(ERROR_TRANSFORM_RESPONSE.type, 'Error parsing response headers: ' + error.message);
     }
     if (!response.template) return {status, headers};
 
@@ -83,7 +89,7 @@ export const transformResponse = async (context = {}, response) => {
             return {status, headers, body};
         }
         catch (error) {
-            throw new Error('Error parsing body from response template: ' + error.message + ', body: ' + bodyString);
+            throwError(ERROR_TRANSFORM_RESPONSE.type, 'Error parsing body from response template: ' + error.message + ', body: ' + bodyString);
         }
     }
     return {status, headers, body: bodyString};

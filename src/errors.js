@@ -10,6 +10,8 @@ export const ERROR_RESPONSE_ID = {type: Symbol('ERROR_UERROR_RESPONSE_IDNKNOWN')
 export const ERROR_TRANSFORM_RESPONSE = {type: Symbol('ERROR_TRANSFORM_RESPONSE'), code: 1005, message: 'Error transforming response'};
 export const ERROR_MAPPING_ID = {type: Symbol('ERROR_MAPPING_ID'), code: 1006, message: 'You must provide a mappingsId'};
 export const ERROR_TARGET_ID = {type: Symbol('ERROR_TARGET_ID'), code: 1007, message: 'You must provide a targetsId'};
+export const ERROR_MAPPING_FORMAT = {type: Symbol('ERROR_MAPPING_FORMAT'), code: 1008, message: 'You must provide a valid mapping object'};
+export const ERROR_PARAMS_MISSING = {type: Symbol('ERROR_PARAM_MISSING'), code: 1009, message: 'You must provide all required params'};
 
 // Mongo errors
 export const ERROR_DATABASE = {type: Symbol('ERROR_DATABASE'), code: 9001, message: 'Database Error'};
@@ -24,6 +26,8 @@ const ERRORS = {
     [ERROR_TRANSFORM_RESPONSE.type]: ERROR_TRANSFORM_RESPONSE,
     [ERROR_MAPPING_ID.type]: ERROR_MAPPING_ID,
     [ERROR_TARGET_ID.type]: ERROR_TARGET_ID,
+    [ERROR_MAPPING_FORMAT.type]: ERROR_MAPPING_FORMAT,
+    [ERROR_PARAMS_MISSING.type]: ERROR_PARAMS_MISSING,
     [ERROR_DATABASE.type]: ERROR_DATABASE
 };
 

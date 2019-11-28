@@ -1,7 +1,11 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
 import { createDependencies } from '../src/dependencies';
-import { ERROR_DATABASE } from '../src/errors';
+import {
+    ERROR_DATABASE,
+    ERROR_PARAMS_MISSING,
+    ERROR_MAPPING_FORMAT
+} from '../src/errors';
 import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
 import { buildMappingsService } from '../src/services/mappings';
@@ -10,11 +14,10 @@ describe('admin', () => {
     let server, deps, dbClient, mappingsCollection;
     beforeAll(
         async () => {
-            deps = await createDependencies({DBNAME: 'test-getmapping-byid'});
+            deps = await createDependencies({DBNAME: 'test-routes-mapping'});
             ({dbClient, mappingsCollection} = deps(['dbClient', 'mappingsCollection']));
         }
     );
-
     afterAll(
         async () => {
             await dbClient.close();
@@ -23,7 +26,6 @@ describe('admin', () => {
     beforeEach(async () => {
         server = buildServer(deps);
     });
-
     afterEach(async () => {
         await server.close();
         await mappingsCollection.deleteMany();
@@ -85,6 +87,109 @@ describe('admin', () => {
             });
             expect(response.statusCode).toBe(200);
             expect(JSON.parse(response.payload)).toEqual(result.ops.map((mapping) => ({...mapping, _id: mapping._id + ''})));
+        });
+    });
+
+    describe('[POST] /mappings', () => {
+
+        it('should return 400 Error when mongodb fails', async () => {
+            const mappingsService = buildMappingsService(EMPTY_OBJECT);
+            const overDeps = overridedDeps(deps, {mappingsService});
+            const server = buildServer(overDeps);
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/mappings',
+                payload: {name: 'mapping-name', template: '{}', type: 'json'}
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_DATABASE.code,
+                    ERROR_DATABASE.message,
+                    {
+                        details: 'mappingCollection.insertOne is not a function'
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when missing required params (name and template)', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/mappings'
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_PARAMS_MISSING.code,
+                    ERROR_PARAMS_MISSING.message,
+                    {
+                        params: ['name', 'template']
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when type is json but template cannot be parsed', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/mappings',
+                payload: {name: 'mapping-name', template: '{"value": 10', type: 'json'}
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_MAPPING_FORMAT.code,
+                    ERROR_MAPPING_FORMAT.message,
+                    {
+                        details: 'Error parsing body from mapping template: Unexpected end of JSON input, body: {\"value\": 10'
+                    }
+                )
+            );
+        });
+
+        it('should return 200 when mapping is a valid json', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/mappings',
+                payload: {name: 'mapping-name', template: '{"type": {{params.sensorType}}, "value": {{params.value}}}', type: 'json'}
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual(
+                {
+                    _id: expect.any(String),
+                    name: 'mapping-name',
+                    template: '{"type": {{params.sensorType}}, "value": {{params.value}}}'
+                }
+            );
+        });
+
+        it('should return 200 when mapping do not have type', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/mappings',
+                payload: {name: 'mapping-name', template: 'type={{params.sensorType}}&value={{params.value}}'}
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual(
+                {
+                    _id: expect.any(String),
+                    name: 'mapping-name',
+                    template: 'type={{params.sensorType}}&value={{params.value}}'
+                }
+            );
         });
     });
 });

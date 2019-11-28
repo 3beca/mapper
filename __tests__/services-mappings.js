@@ -1,6 +1,9 @@
 import { createDependencies } from '../src/dependencies';
 import { typeOf } from '../src/utils/error-encoder';
-import { ERROR_DATABASE } from '../src/errors';
+import {
+    ERROR_DATABASE,
+    ERROR_MAPPING_FORMAT
+} from '../src/errors';
 import { EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { buildMappingsService } from '../src/services/mappings';
 
@@ -167,6 +170,86 @@ describe(
                 const mappings = await service.getMappingById(insertedId);
 
                 expect(mappings).toEqual({...expectedMapping, _id: insertedId});
+            }
+        );
+    }
+);
+
+describe(
+    'inserMapping should',
+    () => {
+        let dbClient, collection, service;
+        beforeAll(
+            async () => {
+                const deps = await createDependencies({DBNAME: 'test-mapping-service-create-mappings'});
+                ({
+                    dbClient,
+                    mappingsCollection: collection,
+                    mappingsService: service
+                } = deps(['dbClient', 'mappingsCollection', 'mappingsService']));
+            }
+        );
+
+        afterEach(
+            async () => {
+                await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
+                await dbClient.close();
+            }
+        );
+
+        it(
+            'return Error when database fails',
+            async () => {
+                expect.assertions(1);
+                const mappingsService = buildMappingsService(EMPTY_OBJECT);
+                const mappingObject = {};
+
+                try {
+                    await mappingsService.insertMapping(mappingObject);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return Error object mapping is null',
+            async () => {
+                expect.assertions(1);
+                const mappingObject = null;
+
+                try {
+                    await service.insertMapping(mappingObject);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_MAPPING_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return the object inserted in database',
+            async () => {
+                const mappingObject = {
+                    name: 'CEP-Notifier',
+                    description: 'Transform CEP body in Notifier Body',
+                    template: '{"sendorName": "{{body.name}}", "temperature": {{body.temperature}}}'
+                };
+
+                const mappingIserted = await service.insertMapping(mappingObject);
+
+                expect(mappingIserted).toEqual({
+                    _id: expect.anything(),
+                    name: mappingObject.name,
+                    description: mappingObject.description,
+                    template: mappingObject.template
+                });
             }
         );
     }
