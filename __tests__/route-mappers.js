@@ -263,7 +263,7 @@ describe('Route mapper', () => {
                             'content-length': '36'
                         }
                     },
-                    details: 'sourceCollection.findOne is not a function'
+                    details: 'sourcesCollection.findOne is not a function'
                 }
             )
         );

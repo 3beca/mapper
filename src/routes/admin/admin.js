@@ -1,5 +1,8 @@
 import packageInfo from '../../../package.json';
 import {buildAdminMappingsRoutes} from './mappings';
+import {buildAdminTargetsRoutes} from './targets';
+import {buildAdminResponsesRoutes} from './responses';
+import {buildAdminSourcesRoutes} from './sources';
 
 const checkHealthSchema = {
     tags: ['system'],
@@ -38,6 +41,9 @@ export function buildAdminRoutes(deps) {
         fastify.get('/check-health', { ...opts, ...{ logLevel: 'warn', schema: checkHealthSchema } }, checkHealth);
         fastify.get('/version', { ...opts, ...{ logLevel: 'warn', schema: versionSchema } }, version);
         fastify.register(buildAdminMappingsRoutes(deps), { prefix: '/mappings' });
+        fastify.register(buildAdminTargetsRoutes(deps), { prefix: '/targets' });
+        fastify.register(buildAdminResponsesRoutes(deps), { prefix: '/responses' });
+        fastify.register(buildAdminSourcesRoutes(deps), { prefix: '/sources' });
         next();
     };
 }

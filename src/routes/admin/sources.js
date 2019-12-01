@@ -3,16 +3,15 @@ import { checkTemplate } from '../../services/http-engine';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
-    ERROR_MAPPING_ID,
     findError,
     ERROR_NOTFOUND
 } from '../../errors';
 
-const listMappingSchema = {
+const listSourceSchema = {
     tags: ['system'],
     response: {
         200: {
-            description: 'List of mappings',
+            description: 'List of Sources',
             type: 'array',
             items: {
                 type: 'object',
@@ -20,36 +19,58 @@ const listMappingSchema = {
                     _id: { type: 'string' },
                     name: { type: 'string' },
                     description: { type: 'string' },
-                    template: { type: 'string' }
+                    flows: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                mappingId: { type: 'string' },
+                                targetId: { type: 'string' }
+                            }
+                        }
+                    },
+                    responseId: { type: 'string' },
+                    serial: { type: 'boolean' },
                 }
             }
         }
     }
 };
 
-const MappingSchema = {
+const SourceSchema = {
     tags: ['system'],
     response: {
         200: {
-            description: 'List of mappings',
+            description: 'Object Source',
             type: 'object',
             properties: {
                 _id: { type: 'string' },
                 name: { type: 'string' },
                 description: { type: 'string' },
-                template: { type: 'string' }
+                flows: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            mappingId: { type: 'string' },
+                            targetId: { type: 'string' }
+                        }
+                    }
+                },
+                responseId: { type: 'string' },
+                serial: { type: 'boolean' },
             }
         }
     }
 };
 
-export function buildAdminMappingsRoutes(deps) {
-    const { mappingsService } = deps(['mappingsService']);
+export function buildAdminSourcesRoutes(deps) {
+    const { sourcesService } = deps(['sourcesService']);
 
-    async function listMappings(request, reply) {
+    async function listSources(request, reply) {
         try {
-            const mappings = await mappingsService.getMappings();
-            reply.code(200).send(mappings);
+            const sources = await sourcesService.getSources();
+            reply.code(200).send(sources);
         }
         catch (error) {
             reply.code(400).send(
@@ -65,17 +86,14 @@ export function buildAdminMappingsRoutes(deps) {
         }
     }
 
-    async function findMapping(request, reply) {
-        const mappingId = request.params.mappingId;
-        // if (!mappingId) {
-        //     return void reply.code(400).send(encodeError(ERROR_MAPPING_ID));
-        // }
+    async function findSource(request, reply) {
+        const sourceId = request.params.sourceId;
         try {
-            const mapping = await mappingsService.getMappingById(mappingId);
-            if (!mapping) {
-                return void reply.code(404).send(encodeError({...ERROR_NOTFOUND, meta: {details: `MappingId ${mappingId} not found in database`}}));
+            const source = await sourcesService.getSourceById(sourceId);
+            if (!source) {
+                return void reply.code(404).send(encodeError({...ERROR_NOTFOUND, meta: {details: `SourceId ${sourceId} not found in database`}}));
             }
-            return void reply.code(200).send(mapping);
+            return void reply.code(200).send(source);
         }
         catch (error) {
             return void reply.code(400).send(
@@ -91,12 +109,11 @@ export function buildAdminMappingsRoutes(deps) {
         }
     }
 
-    async function createMapping(request, reply) {
+    async function createSource(request, reply) {
         const body = request.body || {};
         let errors = null;
         const missingParams = [
             'name',
-            'template'
         ].filter(param => !body[param]);
 
         if (missingParams.length > 0) {
@@ -111,12 +128,14 @@ export function buildAdminMappingsRoutes(deps) {
             // Check if json and validate template
             const type = body.type;
             await checkTemplate({}, body.template, type === 'json');
-            const mapping = {
+            const source = {
                 name: body.name,
                 description: body.description,
-                template: body.template
+                method: body.method,
+                headers: body.headers,
+                url: body.url
             };
-            const inserted = await mappingsService.insertMapping(mapping);
+            const inserted = await sourcesService.insertsource(source);
             return void reply.code(200).send(inserted);
         }
         catch (error) {
@@ -127,9 +146,9 @@ export function buildAdminMappingsRoutes(deps) {
     }
 
     return function(fastify, opts, next) {
-        fastify.get('/', { ...opts, ...{ logLevel: 'warn', schema: listMappingSchema }}, listMappings);
-        fastify.get('/:mappingId', { ...opts, ...{ logLevel: 'warn', schema: MappingSchema }}, findMapping);
-        fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: MappingSchema }}, createMapping);
+        fastify.get('/', { ...opts, ...{ logLevel: 'warn', schema: listSourceSchema }}, listSources);
+        fastify.get('/:sourceId', { ...opts, ...{ logLevel: 'warn', schema: SourceSchema }}, findSource);
+        fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: SourceSchema }}, createSource);
         next();
     };
 }

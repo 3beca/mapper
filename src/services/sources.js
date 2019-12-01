@@ -2,10 +2,10 @@ import { getId } from '../database';
 import { reThrowError } from '../utils/error-encoder';
 import { ERROR_DATABASE } from '../errors';
 
-export const buildSourcesService = (sourceCollection) => {
+export const buildSourcesService = (sourcesCollection) => {
     const getSources = async () => {
         try {
-            return await sourceCollection.find({}).toArray();
+            return await sourcesCollection.find({}).toArray();
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
@@ -14,7 +14,7 @@ export const buildSourcesService = (sourceCollection) => {
 
     const getSourceById = async (id) => {
         try {
-            return sourceCollection.findOne({_id: getId(id)});
+            return sourcesCollection.findOne({_id: getId(id)});
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);

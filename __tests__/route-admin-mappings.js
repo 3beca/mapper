@@ -4,7 +4,8 @@ import { createDependencies } from '../src/dependencies';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
-    ERROR_MAPPING_FORMAT
+    ERROR_MAPPING_FORMAT,
+    ERROR_NOTFOUND
 } from '../src/errors';
 import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
@@ -50,7 +51,7 @@ describe('admin', () => {
                     ERROR_DATABASE.code,
                     ERROR_DATABASE.message,
                     {
-                        details: 'mappingCollection.find is not a function'
+                        details: 'mappingsCollection.find is not a function'
                     }
                 )
             );
@@ -90,6 +91,87 @@ describe('admin', () => {
         });
     });
 
+    describe('[GET] /mappings/:id', () => {
+
+        it('should return 400 Error when mongodb fails', async () => {
+            const mappingsService = buildMappingsService(EMPTY_OBJECT);
+            const overDeps = overridedDeps(deps, {mappingsService});
+            const server = buildServer(overDeps);
+
+            const response = await server.inject({
+                method: 'GET',
+                url: '/admin/mappings/123456789098'
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_DATABASE.code,
+                    ERROR_DATABASE.message,
+                    {
+                        details: 'mappingsCollection.findOne is not a function'
+                    }
+                )
+            );
+        });
+
+        it('should return Error 404 when mapping not found', async () => {
+            const mappingId = '123456789098';
+            const response = await server.inject({
+                method: 'GET',
+                url: '/admin/mappings/' + mappingId
+            });
+            expect(response.statusCode).toBe(404);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError({...ERROR_NOTFOUND, meta: {details: `MappingId ${mappingId} not found in database`}})
+            );
+        });
+
+        it('should return Error DATABASE when it is null', async () => {
+            const mappingId = null;
+            const response = await server.inject({
+                method: 'GET',
+                url: '/admin/mappings/' + mappingId
+            });
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_DATABASE.code,
+                    ERROR_DATABASE.message,
+                    {
+                        details: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'
+                    }
+                )
+            );
+        });
+
+        it('should return the mapping object with this mappingId', async () => {
+            const expectedMapping = {
+                name: 'nameformapping1',
+                description: '',
+                template: ''
+            };
+            const expectedMappings = [
+                expectedMapping,
+                {
+                    name: 'nameformapping2',
+                    description: '',
+                    template: ''
+                }
+            ];
+            const result = await mappingsCollection.insertMany(expectedMappings);
+            const mappingId = result.ops[0]._id;
+            const response = await server.inject({
+                method: 'GET',
+                url: '/admin/mappings/' + mappingId
+            });
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual({...expectedMapping, _id: mappingId + ''});
+        });
+    });
+
     describe('[POST] /mappings', () => {
 
         it('should return 400 Error when mongodb fails', async () => {
@@ -110,7 +192,7 @@ describe('admin', () => {
                     ERROR_DATABASE.code,
                     ERROR_DATABASE.message,
                     {
-                        details: 'mappingCollection.insertOne is not a function'
+                        details: 'mappingsCollection.insertOne is not a function'
                     }
                 )
             );

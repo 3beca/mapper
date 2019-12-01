@@ -5,10 +5,10 @@ import {
     ERROR_MAPPING_FORMAT
 } from '../errors';
 
-export const buildMappingsService = (mappingCollection) => {
+export const buildMappingsService = (mappingsCollection) => {
     const getMappings = async () => {
         try {
-            return await mappingCollection.find({}).toArray();
+            return await mappingsCollection.find({}).toArray();
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
@@ -18,7 +18,7 @@ export const buildMappingsService = (mappingCollection) => {
     const getMappingById = async (id) => {
         if (!id) return null;
         try {
-            return mappingCollection.findOne({_id: getId(id)});
+            return mappingsCollection.findOne({_id: getId(id)});
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
@@ -28,7 +28,7 @@ export const buildMappingsService = (mappingCollection) => {
     const insertMapping = async (mapping) => {
         if (!mapping) return throwError(ERROR_MAPPING_FORMAT.type, ERROR_MAPPING_FORMAT.message);
         try {
-            const { inserted } = await mappingCollection.insertOne(mapping);
+            const { inserted } = await mappingsCollection.insertOne(mapping);
             return {
                 _id: inserted,
                 ...mapping

@@ -3,16 +3,15 @@ import { checkTemplate } from '../../services/http-engine';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
-    ERROR_MAPPING_ID,
     findError,
     ERROR_NOTFOUND
 } from '../../errors';
 
-const listMappingSchema = {
+const listResponseSchema = {
     tags: ['system'],
     response: {
         200: {
-            description: 'List of mappings',
+            description: 'List of Responses',
             type: 'array',
             items: {
                 type: 'object',
@@ -20,36 +19,40 @@ const listMappingSchema = {
                     _id: { type: 'string' },
                     name: { type: 'string' },
                     description: { type: 'string' },
-                    template: { type: 'string' }
+                    status: { type: 'string' },
+                    template: { type: 'string' },
+                    headers: { type: 'string' }
                 }
             }
         }
     }
 };
 
-const MappingSchema = {
+const ResponseSchema = {
     tags: ['system'],
     response: {
         200: {
-            description: 'List of mappings',
+            description: 'Object Response',
             type: 'object',
             properties: {
                 _id: { type: 'string' },
                 name: { type: 'string' },
                 description: { type: 'string' },
-                template: { type: 'string' }
+                status: { type: 'string' },
+                template: { type: 'string' },
+                headers: { type: 'string' }
             }
         }
     }
 };
 
-export function buildAdminMappingsRoutes(deps) {
-    const { mappingsService } = deps(['mappingsService']);
+export function buildAdminResponsesRoutes(deps) {
+    const { responsesService } = deps(['responsesService']);
 
-    async function listMappings(request, reply) {
+    async function listResponses(request, reply) {
         try {
-            const mappings = await mappingsService.getMappings();
-            reply.code(200).send(mappings);
+            const responses = await responsesService.getResponses();
+            reply.code(200).send(responses);
         }
         catch (error) {
             reply.code(400).send(
@@ -65,17 +68,14 @@ export function buildAdminMappingsRoutes(deps) {
         }
     }
 
-    async function findMapping(request, reply) {
-        const mappingId = request.params.mappingId;
-        // if (!mappingId) {
-        //     return void reply.code(400).send(encodeError(ERROR_MAPPING_ID));
-        // }
+    async function findResponse(request, reply) {
+        const responseId = request.params.responseId;
         try {
-            const mapping = await mappingsService.getMappingById(mappingId);
-            if (!mapping) {
-                return void reply.code(404).send(encodeError({...ERROR_NOTFOUND, meta: {details: `MappingId ${mappingId} not found in database`}}));
+            const response = await responsesService.getResponseById(responseId);
+            if (!response) {
+                return void reply.code(404).send(encodeError({...ERROR_NOTFOUND, meta: {details: `ResponseId ${responseId} not found in database`}}));
             }
-            return void reply.code(200).send(mapping);
+            return void reply.code(200).send(response);
         }
         catch (error) {
             return void reply.code(400).send(
@@ -91,12 +91,13 @@ export function buildAdminMappingsRoutes(deps) {
         }
     }
 
-    async function createMapping(request, reply) {
+    async function createResponse(request, reply) {
         const body = request.body || {};
         let errors = null;
         const missingParams = [
             'name',
-            'template'
+            'method',
+            'url'
         ].filter(param => !body[param]);
 
         if (missingParams.length > 0) {
@@ -111,12 +112,14 @@ export function buildAdminMappingsRoutes(deps) {
             // Check if json and validate template
             const type = body.type;
             await checkTemplate({}, body.template, type === 'json');
-            const mapping = {
+            const response = {
                 name: body.name,
                 description: body.description,
+                status: body.status,
+                headers: body.headers,
                 template: body.template
             };
-            const inserted = await mappingsService.insertMapping(mapping);
+            const inserted = await responsesService.insertResponse(response);
             return void reply.code(200).send(inserted);
         }
         catch (error) {
@@ -127,9 +130,9 @@ export function buildAdminMappingsRoutes(deps) {
     }
 
     return function(fastify, opts, next) {
-        fastify.get('/', { ...opts, ...{ logLevel: 'warn', schema: listMappingSchema }}, listMappings);
-        fastify.get('/:mappingId', { ...opts, ...{ logLevel: 'warn', schema: MappingSchema }}, findMapping);
-        fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: MappingSchema }}, createMapping);
+        fastify.get('/', { ...opts, ...{ logLevel: 'warn', schema: listResponseSchema }}, listResponses);
+        fastify.get('/:responseId', { ...opts, ...{ logLevel: 'warn', schema: ResponseSchema }}, findResponse);
+        fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: ResponseSchema }}, createResponse);
         next();
     };
 }

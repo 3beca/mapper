@@ -2,10 +2,10 @@ import { getId } from '../database';
 import { reThrowError } from '../utils/error-encoder';
 import { ERROR_DATABASE } from '../errors';
 
-export const buildTargetsService = (targetCollection) => {
+export const buildTargetsService = (targetsCollection) => {
     const getTargets = async () => {
         try {
-            return await targetCollection.find({}).toArray();
+            return await targetsCollection.find({}).toArray();
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
@@ -14,7 +14,7 @@ export const buildTargetsService = (targetCollection) => {
 
     const getTargetById = async (id) => {
         try {
-            return targetCollection.findOne({_id: getId(id)});
+            return targetsCollection.findOne({_id: getId(id)});
         }
         catch (error) {
             return void reThrowError(ERROR_DATABASE.type, error);
