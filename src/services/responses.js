@@ -1,6 +1,9 @@
 import { getId } from '../database';
-import { reThrowError } from '../utils/error-encoder';
-import { ERROR_DATABASE } from '../errors';
+import { reThrowError, throwError } from '../utils/error-encoder';
+import {
+    ERROR_DATABASE,
+    ERROR_RESPONSE_FORMAT
+} from '../errors';
 
 export const buildResponsesService = (responsesCollection) => {
     const getResponses = async () => {
@@ -21,9 +24,24 @@ export const buildResponsesService = (responsesCollection) => {
         }
     };
 
+    const insertResponse = async (response) => {
+        if (!response) return throwError(ERROR_RESPONSE_FORMAT.type, ERROR_RESPONSE_FORMAT.message);
+        try {
+            const { inserted } = await responsesCollection.insertOne(response);
+            return {
+                _id: inserted,
+                ...response
+            };
+        }
+        catch (error) {
+                return void reThrowError(ERROR_DATABASE.type, error);
+        }
+    };
+
     return {
         getResponses,
-        getResponseById
+        getResponseById,
+        insertResponse
     };
 };
 

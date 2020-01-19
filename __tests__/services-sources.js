@@ -3,10 +3,13 @@ import {
     buildSourcesService
 } from '../src/services/sources';
 import { typeOf } from '../src/utils/error-encoder';
-import { ERROR_DATABASE } from '../src/errors';
+import {
+    ERROR_DATABASE,
+    ERROR_SOURCE_FORMAT
+} from '../src/errors';
 
 describe(
-    'getsources should',
+    'getSources should',
     () => {
         let dbClient, collection, service;
         beforeAll(
@@ -168,6 +171,102 @@ describe(
                 const sources = await service.getSourceById(insertedId);
 
                 expect(sources).toEqual({...expectedsource, _id: insertedId});
+            }
+        );
+    }
+);
+
+describe(
+    'insertSource should',
+    () => {
+        let dbClient, collection, service;
+        beforeAll(
+            async () => {
+                const deps = await createDependencies({DBNAME: 'test-sources-service-insert'});
+                ({
+                    dbClient,
+                    sourcesCollection: collection,
+                    sourcesService: service
+                } = deps(['dbClient', 'sourcesCollection', 'sourcesService']));
+            }
+        );
+
+        afterEach(
+            async () => {
+                await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
+                await dbClient.close();
+            }
+        );
+
+        it(
+            'return ERROR_DATABASE when database fails',
+            async () => {
+                expect.assertions(1);
+                const service = buildSourcesService({});
+
+                try {
+                    await service.insertSource({});
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return an ERROR_SOURCE_FORMAT when source is null',
+            async () => {
+                expect.assertions(1);
+
+                try {
+                    await service.insertSource(null);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_SOURCE_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return an ERROR_SOURCE_FORMAT when source is undefined',
+            async () => {
+                expect.assertions(1);
+
+                try {
+                    await service.insertSource();
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_SOURCE_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return the object inserted in database',
+            async () => {
+                const responseObject = {
+                    name: 'CEP-Notifier-source',
+                    description: 'Transform CEP body in Notifier Body',
+                    flows: [{mappingId: '', targetId: ''}],
+                    responseId: '',
+                    serial: false
+                };
+
+                const responseInserted = await service.insertSource(responseObject);
+
+                expect(responseInserted).toEqual({
+                    _id: expect.anything(),
+                    name: responseInserted.name,
+                    description: responseInserted.description,
+                    flows: responseInserted.flows,
+                    responseId: responseInserted.responseId,
+                    serial: responseInserted.serial
+                });
             }
         );
     }

@@ -3,7 +3,10 @@ import {
     buildResponsesService
 } from '../src/services/responses';
 import { typeOf } from '../src/utils/error-encoder';
-import { ERROR_DATABASE } from '../src/errors';
+import {
+    ERROR_DATABASE,
+    ERROR_RESPONSE_FORMAT
+} from '../src/errors';
 
 describe(
     'getresponses should',
@@ -168,6 +171,102 @@ describe(
                 const responses = await service.getResponseById(insertedId);
 
                 expect(responses).toEqual({...expectedresponse, _id: insertedId});
+            }
+        );
+    }
+);
+
+describe(
+    'insertResponse should',
+    () => {
+        let dbClient, collection, service;
+        beforeAll(
+            async () => {
+                const deps = await createDependencies({DBNAME: 'test-responses-service-insert'});
+                ({
+                    dbClient,
+                    responsesCollection: collection,
+                    responsesService: service
+                } = deps(['dbClient', 'responsesCollection', 'responsesService']));
+            }
+        );
+
+        afterEach(
+            async () => {
+                await collection.deleteMany();
+            }
+        );
+
+        afterAll(
+            async () => {
+                await dbClient.close();
+            }
+        );
+
+        it(
+            'return an ERROR_DATABASE when database fails',
+            async () => {
+                expect.assertions(1);
+                const service = buildResponsesService({});
+
+                try {
+                    await service.insertResponse({});
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_DATABASE.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return an ERROR_RESPONSE_FORMAT when response is null',
+            async () => {
+                expect.assertions(1);
+
+                try {
+                    await service.insertResponse(null);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_RESPONSE_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return an ERROR_RESPONSE_FORMAT when response is undefined',
+            async () => {
+                expect.assertions(1);
+
+                try {
+                    await service.insertResponse();
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_RESPONSE_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return the object inserted in database',
+            async () => {
+                const responseObject = {
+                    name: 'CEP-Notifier-target',
+                    description: 'Transform CEP body in Notifier Body',
+                    status: '200',
+                    headers: '{"content-type": "text/html", "appid": "3beca"',
+                    template: 'free text response'
+                };
+
+                const responseInserted = await service.insertResponse(responseObject);
+
+                expect(responseInserted).toEqual({
+                    _id: expect.anything(),
+                    name: responseInserted.name,
+                    description: responseInserted.description,
+                    status: responseInserted.status,
+                    headers: responseInserted.headers,
+                    template: responseInserted.template
+                });
             }
         );
     }

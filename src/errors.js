@@ -11,7 +11,12 @@ export const ERROR_TRANSFORM_RESPONSE = {type: Symbol('ERROR_TRANSFORM_RESPONSE'
 export const ERROR_MAPPING_ID = {type: Symbol('ERROR_MAPPING_ID'), code: 1006, message: 'You must provide a mappingsId'};
 export const ERROR_TARGET_ID = {type: Symbol('ERROR_TARGET_ID'), code: 1007, message: 'You must provide a targetsId'};
 export const ERROR_MAPPING_FORMAT = {type: Symbol('ERROR_MAPPING_FORMAT'), code: 1008, message: 'You must provide a valid mapping object'};
-export const ERROR_PARAMS_MISSING = {type: Symbol('ERROR_PARAM_MISSING'), code: 1009, message: 'You must provide all required params'};
+export const ERROR_TARGET_FORMAT = {type: Symbol('ERROR_TARGET_FORMAT'), code: 1009, message: 'You must provide a valid target object'};
+export const ERROR_RESPONSE_FORMAT = {type: Symbol('ERROR_RESPONSE_FORMAT'), code: 1010, message: 'You must provide a valid response object'};
+export const ERROR_SOURCE_FORMAT = {type: Symbol('ERROR_SOURCE_FORMAT'), code: 1011, message: 'You must provide a valid source object'};
+
+// Params Errors
+export const ERROR_PARAMS_MISSING = {type: Symbol('ERROR_PARAM_MISSING'), code: 8001, message: 'You must provide all required params'};
 
 // Mongo errors
 export const ERROR_DATABASE = {type: Symbol('ERROR_DATABASE'), code: 9001, message: 'Database Error'};
