@@ -47,7 +47,7 @@
     "fastify-formbody": "^3.1.0",
     "fastify-swagger": "^2.5.0",
     "liquidjs": "^9.6.2",
-    "mongodb": "^3.5.1",
+    "mongodb": "^3.5.2",
     "node-fetch": "^2.6.0"
   }
 }
