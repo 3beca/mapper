@@ -3,7 +3,9 @@ import { buildServer } from '../src/server';
 import { createDependencies } from '../src/dependencies';
 import {
     ERROR_DATABASE,
-    ERROR_NOTFOUND
+    ERROR_NOTFOUND,
+    ERROR_PARAMS_MISSING,
+    ERROR_HEADER_FORMAT
 } from '../src/errors';
 import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
@@ -178,19 +180,19 @@ describe('admin', () => {
         });
     });
 
-    describe.skip('[POST] /responses', () => {
+    describe('[POST] /responses', () => {
 
         it('should return 400 Error when mongodb fails', async () => {
-            const targetsService = buildResponsesService(EMPTY_OBJECT);
-            const overDeps = overridedDeps(deps, {targetsService});
+            const responsesService = buildResponsesService(EMPTY_OBJECT);
+            const overDeps = overridedDeps(deps, {responsesService});
             const server = buildServer(overDeps);
 
             const response = await server.inject({
                 method: 'POST',
-                url: '/admin/targets',
+                url: '/admin/responses',
                 headers: {'content-type': 'application/json'},
                 payload: {
-                    name: 'target-name',
+                    name: 'response-name',
                     description: '',
                     status: '200',
                     template: 'OK',
@@ -208,6 +210,129 @@ describe('admin', () => {
                         details: 'responsesCollection.insertOne is not a function'
                     }
                 )
+            );
+        });
+
+        it('should return 400 Error when missing required params (name or status)', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/responses'
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_PARAMS_MISSING.code,
+                    ERROR_PARAMS_MISSING.message,
+                    {
+                        params: ['name', 'status']
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when receive invalid header', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/responses',
+                headers: {'content-type': 'application/json'},
+                payload: {
+                    name: 'response-name',
+                    description: '',
+                    status: '200',
+                    template: 'OK',
+                    headers: '"content-type": "text"}'
+                }
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_HEADER_FORMAT.code,
+                    ERROR_HEADER_FORMAT.message,
+                    {
+                        details: 'Error parsing headers from template: Unexpected token : in JSON at position 14, headers: \"content-type\": \"text\"}'
+                    }
+                )
+            );
+        });
+
+        it('should return 200 when create a full valid response object', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/responses',
+                headers: {'content-type': 'application/json'},
+                payload: {
+                    name: 'response-name',
+                    description: 'sample description',
+                    status: '200',
+                    template: '{{respponse.message}}',
+                    headers: '{"content-type": "text"}'
+                }
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual(
+                {
+                    _id: expect.any(String),
+                    description: 'sample description',
+                    name: 'response-name',
+                    headers: '{"content-type": "text"}',
+                    status: '200',
+                    template: '{{respponse.message}}'
+                }
+            );
+        });
+
+        it('should return 200 when create a valid response object without headers', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/responses',
+                headers: {'content-type': 'application/json'},
+                payload: {
+                    name: 'response-name',
+                    description: 'sample description',
+                    status: '200',
+                    template: '{{respponse.message}}'
+                }
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual(
+                {
+                    _id: expect.any(String),
+                    description: 'sample description',
+                    name: 'response-name',
+                    status: '200',
+                    template: '{{respponse.message}}'
+                }
+            );
+        });
+
+        it('should return 200 when create a valid response object without template', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/responses',
+                headers: {'content-type': 'application/json'},
+                payload: {
+                    name: 'response-name',
+                    description: '',
+                    status: '200',
+                    headers: '{"content-type": "text"}'
+                }
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual(
+                {
+                    _id: expect.any(String),
+                    description: '',
+                    name: 'response-name',
+                    headers: '{"content-type": "text"}',
+                    status: '200'
+                }
             );
         });
     });

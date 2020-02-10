@@ -1,7 +1,7 @@
 jest.mock('pino');
 import { buildServer } from '../src/server';
 import { createDependencies } from '../src/dependencies';
-import { fakeDeps, overridedDeps } from '../tests-utils/dependencies';
+import { overridedDeps } from '../tests-utils/dependencies';
 import { buildResponsesService } from '../src/services/responses';
 import { buildSourcesService } from '../src/services/sources';
 import {
@@ -18,6 +18,10 @@ import {
 import {
     EMPTY_OBJECT
 } from '../tests-utils/dependencies';
+import {
+    createFakeFlow,
+    createFakeResponse
+} from '../tests-utils/fake-entities';
 
 describe('Route mapper', () => {
     let deps, dbClient, mappingsCollection, sourcesCollection, targetsCollection, responsesCollection, server;
@@ -56,44 +60,6 @@ describe('Route mapper', () => {
             server = buildServer(deps);
         }
     );
-
-    const createFakeFlow = async (
-        template,
-        headers,
-        url = 'https://notifier.triveca.ovh/',
-        method = 'POST',
-        name = 'Test' + Date.now()
-    ) => {
-        const target = {
-            name: 'target' + name,
-            method,
-            url,
-            headers
-        };
-        const mapping = {
-            name: 'mapping' + name,
-            template
-        };
-        const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
-        const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
-        return {mappingId: mappingInserted, targetId: targetInserted};
-    };
-
-    const createFakeResponse = async (
-        template,
-        headers,
-        status = '200',
-        name = 'Test' + Date.now()
-    ) => {
-        const responseMapping = {
-            name: 'response' + name,
-            status,
-            template,
-            headers
-        };
-        const { insertedId: responseInserted} = await responsesCollection.insertOne(responseMapping);
-        return responseInserted;
-    };
 
     it('should return ERROR SOURCE_ID when sourceid not sent', async () => {
         const context = {
@@ -322,6 +288,8 @@ describe('Route mapper', () => {
             headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
         const flow1 = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
             '{"senderName": "{{body.name}}", "temperature": {{body.temperature}}}',
             '{"content-type" : "application/json"}',
             'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}'
@@ -844,18 +812,23 @@ describe('Route mapper', () => {
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
         const flow1 = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
             '{"id": "{{params.sensorId}}", "sensorType": "{{body.type}}", "sensorValue": {{body.value}}}',
             '{"Content-Type": "application/json", "X-APPID":"{{headers[\'x-appid\']}}"}',
             'https://notifier.triveca.ovh/{{params.sensorId}}?topic={{body.type}}',
             'POST'
         );
         const flow2 = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
             'id={{params.sensorId}}&sensorType={{body.type}}&sensorValue={{body.value}}',
             '{"Content-Type": "application/x-www-form-urlencoded", "X-APPID":"{{headers[\'X-APPID\']}}"}',
             'https://notifier.triveca.ovh/{{params.sensorId}}?topic={{body.type}}',
             'POST'
         );
         const responseMapping = await createFakeResponse(
+            responsesCollection,
             '{"id":"{{params.sensorId}}", "responses": ["{{responses[0].response.body.message}}", "{{responses[1].response.body.message}}"]}',
             '{"content-type": "application/json"}'
         );
@@ -915,18 +888,23 @@ describe('Route mapper', () => {
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
         const flow1 = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
             undefined,
             '{"X-APPID":"{{headers[\'x-appid\']}}"}',
             'https://notifier.triveca.ovh/{{params.sensorId}}?topic={{body.type}}',
             'DELETE'
         );
         const flow2 = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
             'id={{params.sensorId}}&sensorType={{body.type}}&sensorValue={{body.value}}',
             '{"Content-Type": "application/x-www-form-urlencoded", "X-APPID":"{{headers[\'X-APPID\']}}"}',
             'https://notifier.triveca.ovh/{{params.sensorId}}?topic={{body.type}}',
             'POST'
         );
         const responseMapping = await createFakeResponse(
+            responsesCollection,
             '{"id":"{{params.sensorId}}", "responses": ["{{responses[0].response.body.message}}", "{{responses[1].response.body.message}}"]}',
             '{"content-type": "application/json"}'
         );

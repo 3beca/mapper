@@ -86,7 +86,7 @@ export function buildAdminSourcesRoutes(deps) {
         }
     }
 
-    async function findSource(request, reply) {
+    async function findByIdSource(request, reply) {
         const sourceId = request.params.sourceId;
         try {
             const source = await sourcesService.getSourceById(sourceId);
@@ -125,17 +125,11 @@ export function buildAdminSourcesRoutes(deps) {
         }
 
         try {
-            // Check if json and validate template
-            const type = body.type;
-            await checkTemplate({}, body.template, type === 'json');
             const source = {
                 name: body.name,
-                description: body.description,
-                method: body.method,
-                headers: body.headers,
-                url: body.url
+                description: body.description
             };
-            const inserted = await sourcesService.insertsource(source);
+            const inserted = await sourcesService.insertSource(source);
             return void reply.code(200).send(inserted);
         }
         catch (error) {
@@ -147,7 +141,7 @@ export function buildAdminSourcesRoutes(deps) {
 
     return function(fastify, opts, next) {
         fastify.get('/', { ...opts, ...{ logLevel: 'warn', schema: listSourceSchema }}, listSources);
-        fastify.get('/:sourceId', { ...opts, ...{ logLevel: 'warn', schema: SourceSchema }}, findSource);
+        fastify.get('/:sourceId', { ...opts, ...{ logLevel: 'warn', schema: SourceSchema }}, findByIdSource);
         fastify.post('/', { ...opts, ...{ logLevel: 'warn', schema: SourceSchema }}, createSource);
         next();
     };

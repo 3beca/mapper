@@ -3,7 +3,11 @@ import { buildServer } from '../src/server';
 import { createDependencies } from '../src/dependencies';
 import {
     ERROR_DATABASE,
-    ERROR_NOTFOUND
+    ERROR_NOTFOUND,
+    ERROR_PARAMS_MISSING,
+    ERROR_INVALID_PARAM_VALUE,
+    ERROR_TARGET_FORMAT,
+    ERROR_HEADER_FORMAT
 } from '../src/errors';
 import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
@@ -130,7 +134,7 @@ describe('admin', () => {
             );
         });
 
-        it('should return Error DATABASE when it is null', async () => {
+        it('should return Error DATABASE when targetId is null', async () => {
             const targetId = null;
             const response = await server.inject({
                 method: 'GET',
@@ -178,7 +182,7 @@ describe('admin', () => {
         });
     });
 
-    describe.skip('[POST] /targets', () => {
+    describe('[POST] /targets', () => {
 
         it('should return 400 Error when mongodb fails', async () => {
             const targetsService = buildTargetsService(EMPTY_OBJECT);
@@ -206,6 +210,122 @@ describe('admin', () => {
                     ERROR_DATABASE.message,
                     {
                         details: 'targetsCollection.insertOne is not a function'
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when missing required params (name, method or url)', async () => {
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets'
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_PARAMS_MISSING.code,
+                    ERROR_PARAMS_MISSING.message,
+                    {
+                        params: ['name', 'method', 'url']
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when has an invalid header template', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets',
+                payload: {name: 'target-name', method: 'GET', headers: '{"value": 10', url: 'http://tribeca.ovh'}
+            });
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_HEADER_FORMAT.code,
+                    ERROR_HEADER_FORMAT.message,
+                    {
+                        details: 'Error parsing headers from template: Unexpected end of JSON input, headers: {\"value\": 10'
+                    }
+                )
+            );
+        });
+
+        it('should return target inserted when receive a valid target', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets',
+                payload: {name: 'target-name', method: 'POST', headers: '{"content-type": "applicastion/json"}', url: 'http://tribeca.ovh'}
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual({
+                _id: expect.any(String),
+                name: 'target-name',
+                method: 'POST',
+                headers: '{"content-type": "applicastion/json"}',
+                url: 'http://tribeca.ovh'
+            });
+        });
+
+        it('should return target inserted when receive a valid target whitout headers', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets',
+                payload: {name: 'target-name', method: 'GET', url: 'http://tribeca.ovh'}
+            });
+
+            expect(response.statusCode).toBe(200);
+            expect(JSON.parse(response.payload)).toEqual({
+                _id: expect.any(String),
+                name: 'target-name',
+                method: 'GET',
+                url: 'http://tribeca.ovh'
+            });
+        });
+
+        it('should return 400 Error when method is missing', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets',
+                payload: {name: 'target-name', url: 'http://tribeca.ovh'}
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_PARAMS_MISSING.code,
+                    ERROR_PARAMS_MISSING.message,
+                    {
+                        params: ['method']
+                    }
+                )
+            );
+        });
+
+        it('should return 400 Error when method is invalid', async () => {
+
+            const response = await server.inject({
+                method: 'POST',
+                url: '/admin/targets',
+                payload: {name: 'target-name', method: '???', url: 'http://tribeca.ovh'}
+            });
+
+            expect(response.statusCode).toBe(400);
+            expect(JSON.parse(response.payload)).toEqual(
+                encodeError(
+                    null,
+                    ERROR_INVALID_PARAM_VALUE.code,
+                    ERROR_INVALID_PARAM_VALUE.message,
+                    {
+                        params: ['method', '???']
                     }
                 )
             );

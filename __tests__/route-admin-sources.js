@@ -8,13 +8,24 @@ import {
 import { overridedDeps, EMPTY_OBJECT } from '../tests-utils/dependencies';
 import { encodeError } from '../src/utils/error-encoder';
 import { buildSourcesService } from '../src/services/sources';
+import {
+    createFakeSource,
+    createFakeFlow,
+    createFakeResponse
+} from '../tests-utils/fake-entities';
 
 describe('admin', () => {
-    let server, deps, dbClient, sourcesCollection;
+    let server, deps, dbClient, sourcesCollection, mappingsCollection, targetsCollection, responsesCollection;
     beforeAll(
         async () => {
             deps = await createDependencies({DBNAME: 'test-routes-sources'});
-            ({dbClient, sourcesCollection} = deps(['dbClient', 'sourcesCollection']));
+            ({
+                dbClient,
+                sourcesCollection,
+                mappingsCollection,
+                targetsCollection,
+                responsesCollection
+            } = deps(['dbClient', 'sourcesCollection', 'mappingsCollection', 'targetsCollection', 'responsesCollection']));
         }
     );
     afterAll(
@@ -28,6 +39,9 @@ describe('admin', () => {
     afterEach(async () => {
         await server.close();
         await sourcesCollection.deleteMany();
+        await mappingsCollection.deleteMany();
+        await targetsCollection.deleteMany();
+        await responsesCollection.deleteMany();
     });
 
     describe('[GET] /sources', () => {
@@ -190,23 +204,37 @@ describe('admin', () => {
         });
     });
 
-    describe.skip('[POST] /sources', () => {
+    describe('[POST] /sources', () => {
 
         it('should return 400 Error when mongodb fails', async () => {
-            const targetsService = buildSourcesService(EMPTY_OBJECT);
-            const overDeps = overridedDeps(deps, {targetsService});
+            const sourcesService = buildSourcesService(EMPTY_OBJECT);
+            const overDeps = overridedDeps(deps, {sourcesService});
             const server = buildServer(overDeps);
-
+            const fakeSource = await createFakeSource(
+                sourcesCollection,
+                mappingsCollection,
+                targetsCollection,
+                responsesCollection,
+                'It works!!!',
+                '{"content-type": "text/plain"}',
+                'https://notifier.triveca.ovh/',
+                'POST',
+                'Just Works!',
+                '{"content-type": "text/plain"}',
+                '200',
+                'MongoFails'
+            );
+            console.log('Fake Soruce', fakeSource);
             const response = await server.inject({
                 method: 'POST',
-                url: '/admin/targets',
+                url: '/admin/sources',
                 headers: {'content-type': 'application/json'},
                 payload: {
-                    name: 'target-name',
-                    description: '',
-                    status: '200',
-                    template: 'OK',
-                    headers: '{"content-type": "text"}'
+                    name: 'source-name',
+                    description: 'my first source map',
+                    flows: [{mappingId: '123456789098', targetId: '098765432123'}],
+                    responseId: '657473829105',
+                    serial: false
                 }
             });
 

@@ -14,9 +14,11 @@ export const ERROR_MAPPING_FORMAT = {type: Symbol('ERROR_MAPPING_FORMAT'), code:
 export const ERROR_TARGET_FORMAT = {type: Symbol('ERROR_TARGET_FORMAT'), code: 1009, message: 'You must provide a valid target object'};
 export const ERROR_RESPONSE_FORMAT = {type: Symbol('ERROR_RESPONSE_FORMAT'), code: 1010, message: 'You must provide a valid response object'};
 export const ERROR_SOURCE_FORMAT = {type: Symbol('ERROR_SOURCE_FORMAT'), code: 1011, message: 'You must provide a valid source object'};
+export const ERROR_HEADER_FORMAT = {type: Symbol('ERROR_HEADER_FORMAT'), code: 1012, message: 'You must provide a valid header object'};
 
 // Params Errors
 export const ERROR_PARAMS_MISSING = {type: Symbol('ERROR_PARAM_MISSING'), code: 8001, message: 'You must provide all required params'};
+export const ERROR_INVALID_PARAM_VALUE = {type: Symbol('ERROR_INVALID_PARAM_VALUE'), code: 8002, message: 'You must provide a valid value for the param'};
 
 // Mongo errors
 export const ERROR_DATABASE = {type: Symbol('ERROR_DATABASE'), code: 9001, message: 'Database Error'};
@@ -32,8 +34,13 @@ const ERRORS = {
     [ERROR_MAPPING_ID.type]: ERROR_MAPPING_ID,
     [ERROR_TARGET_ID.type]: ERROR_TARGET_ID,
     [ERROR_MAPPING_FORMAT.type]: ERROR_MAPPING_FORMAT,
+    [ERROR_TARGET_FORMAT.type]: ERROR_TARGET_FORMAT,
+    [ERROR_RESPONSE_FORMAT.type]: ERROR_RESPONSE_FORMAT,
+    [ERROR_SOURCE_FORMAT.type]: ERROR_SOURCE_FORMAT,
     [ERROR_PARAMS_MISSING.type]: ERROR_PARAMS_MISSING,
-    [ERROR_DATABASE.type]: ERROR_DATABASE
+    [ERROR_INVALID_PARAM_VALUE]: ERROR_INVALID_PARAM_VALUE,
+    [ERROR_DATABASE.type]: ERROR_DATABASE,
+    [ERROR_HEADER_FORMAT.type]: ERROR_HEADER_FORMAT
 };
 
 export const findError = (error) => {

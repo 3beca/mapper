@@ -1,5 +1,5 @@
 import { encodeError } from '../../utils/error-encoder';
-import { checkTemplate } from '../../services/http-engine';
+import { checkTemplate, checkHeaders } from '../../services/http-engine';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
@@ -96,8 +96,7 @@ export function buildAdminResponsesRoutes(deps) {
         let errors = null;
         const missingParams = [
             'name',
-            'method',
-            'url'
+            'status'
         ].filter(param => !body[param]);
 
         if (missingParams.length > 0) {
@@ -109,9 +108,10 @@ export function buildAdminResponsesRoutes(deps) {
         }
 
         try {
-            // Check if json and validate template
             const type = body.type;
             await checkTemplate({}, body.template, type === 'json');
+            await checkTemplate({}, body.status);
+            if (body.headers) await checkHeaders({}, body.headers);
             const response = {
                 name: body.name,
                 description: body.description,

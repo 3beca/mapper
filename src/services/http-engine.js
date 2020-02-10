@@ -2,7 +2,12 @@ import { Liquid } from 'liquidjs';
 import { applyProxy } from '../utils/apply-proxy';
 import { hasContentTypeJson } from '../utils/parse-headers';
 import { throwError } from '../utils/error-encoder';
-import { ERROR_MAPPING_FORMAT, ERROR_TRANSFORM_SOURCE, ERROR_TRANSFORM_RESPONSE } from '../errors';
+import {
+    ERROR_MAPPING_FORMAT,
+    ERROR_TRANSFORM_SOURCE,
+    ERROR_TRANSFORM_RESPONSE,
+    ERROR_HEADER_FORMAT
+} from '../errors';
 
 const liquidEngine = new Liquid();
 
@@ -11,7 +16,7 @@ const parseTemplate = async (source, template) => {
     return await liquidEngine.parseAndRender(template, source);
 };
 
-export const checkTemplate = async (context, template, isJsonObject) => {
+export const checkTemplate = async (context, template, isJsonObject = false) => {
     const sourceBody = {
         params: applyProxy(context.params || {}, 'null'),
         body: applyProxy(context.body || {}, 'null'),
@@ -27,6 +32,22 @@ export const checkTemplate = async (context, template, isJsonObject) => {
         }
     }
     return body;
+};
+
+export const checkHeaders = async (context, template) => {
+    const sourceBody = {
+        params: applyProxy(context.params || {}, 'null'),
+        body: applyProxy(context.body || {}, 'null'),
+        headers: applyProxy(context.headers || {}, 'null')
+    };
+    const headers = await parseTemplate(sourceBody, template);
+    try {
+        JSON.parse(headers);
+    }
+    catch (error) {
+        throwError(ERROR_HEADER_FORMAT.type, 'Error parsing headers from template: ' + error.message + ', headers: ' + headers);
+    }
+    return headers;
 };
 
 export const transformSource = async (context = {}, template, target) => {

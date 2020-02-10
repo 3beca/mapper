@@ -1,10 +1,11 @@
 import { encodeError } from '../../utils/error-encoder';
-import { checkTemplate } from '../../services/http-engine';
+import { checkHeaders } from '../../services/http-engine';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
     findError,
-    ERROR_NOTFOUND
+    ERROR_NOTFOUND,
+    ERROR_INVALID_PARAM_VALUE
 } from '../../errors';
 
 const listTargetSchema = {
@@ -108,10 +109,13 @@ export function buildAdminTargetsRoutes(deps) {
             return void reply.code(400).send(errors);
         }
 
+        const method = ['GET', 'PUT', 'POST', 'PATCH', 'OPTIONS', 'HEAD'].some((method) => method === body.method);
+        if (!method) {
+            return void reply.code(400).send(encodeError(null, ERROR_INVALID_PARAM_VALUE.code, ERROR_INVALID_PARAM_VALUE.message, {params: ['method', body.method]}));
+        }
+
         try {
-            // Check if json and validate template
-            const type = body.type;
-            await checkTemplate({}, body.template, type === 'json');
+            if (body.headers) await checkHeaders({}, body.headers);
             const target = {
                 name: body.name,
                 description: body.description,

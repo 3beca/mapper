@@ -1,7 +1,14 @@
 import {
     transformSource,
-    transformResponse
+    transformResponse,
+    checkHeaders,
+    checkTemplate
 } from '../src/services/http-engine';
+import {
+    ERROR_MAPPING_FORMAT,
+    ERROR_HEADER_FORMAT
+} from '../src/errors';
+import { typeOf } from '../src/utils/error-encoder';
 
 describe(
     'Http Engine transformSource',
@@ -777,6 +784,92 @@ describe(
                 expect(response.status).toBe(200);
                 expect(response.body).toEqual('<html><body><div>Response 200</div><div>Message request saved</div></body></html>');
                 expect(response.headers).toBe(undefined);
+            }
+        );
+    }
+);
+
+describe(
+    'checkTemplate should',
+    () => {
+        it(
+            'return an Error when template is not a valid json',
+            async () => {
+                expect.assertions(1);
+                const context = {
+                    name: 'testsource1',
+                    params: {id: 25},
+                    body: {name: 'Juanjo', temperature: 25},
+                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                };
+                const template = '';
+
+                try {
+                    await checkTemplate(context, template, true);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_MAPPING_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return a json object when receive a valid template',
+            async () => {
+                const context = {
+                    name: 'testsource1',
+                    params: {id: 25},
+                    body: {name: 'Juanjo', temperature: 25},
+                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                };
+                const template = '{"appId": "{{headers["X-APPID"]}}"}';
+
+                const header = await checkTemplate(context, template, true);
+
+                expect(header).toEqual('{"appId": "tribeca"}');
+            }
+        );
+    }
+);
+
+describe(
+    'checkHeaders should',
+    () => {
+        it(
+            'return an Error when template is not a valid json',
+            async () => {
+                expect.assertions(1);
+                const context = {
+                    name: 'testsource1',
+                    params: {id: 25},
+                    body: {name: 'Juanjo', temperature: 25},
+                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                };
+                const template = '';
+
+                try {
+                    await checkHeaders(context, template);
+                }
+                catch (error) {
+                    expect(typeOf(error, ERROR_HEADER_FORMAT.type)).toBe(true);
+                }
+            }
+        );
+
+        it(
+            'return a headers object when receive a valid tempalte',
+            async () => {
+                const context = {
+                    name: 'testsource1',
+                    params: {id: 25},
+                    body: {name: 'Juanjo', temperature: 25},
+                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                };
+                const template = '{"appId": "{{headers["X-APPID"]}}"}';
+
+                const header = await checkHeaders(context, template);
+
+                expect(header).toEqual('{"appId": "tribeca"}');
             }
         );
     }
