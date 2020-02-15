@@ -19,7 +19,7 @@ export const createFakeSource = async (
         flows: [flow],
         responseId
     });
-    return {_id: sourceInserted, flow, responseId, name: 'Test_Source' + name};
+    return {_id: sourceInserted + '', flows: [flow], responseId, name: 'Test_Source' + name};
 };
 
 export const createFakeFlow = async (
@@ -46,7 +46,7 @@ export const createFakeMapping = async (
         template
     };
     const { insertedId: mappingInserted} = await mappingsCollection.insertOne(mapping);
-    return mappingInserted;
+    return mappingInserted + '';
 };
 
 export const createFakeTarget = async (
@@ -63,7 +63,7 @@ export const createFakeTarget = async (
         headers
     };
     const { insertedId: targetInserted} = await targetsCollection.insertOne(target);
-    return targetInserted;
+    return targetInserted + '';
 };
 
 export const createFakeResponse = async (
@@ -80,5 +80,5 @@ export const createFakeResponse = async (
         headers
     };
     const { insertedId: responseInserted} = await responsesCollection.insertOne(responseMapping);
-    return responseInserted;
+    return responseInserted + '';
 };

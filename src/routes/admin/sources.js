@@ -1,10 +1,10 @@
 import { encodeError } from '../../utils/error-encoder';
-import { checkTemplate } from '../../services/http-engine';
 import {
     ERROR_DATABASE,
     ERROR_PARAMS_MISSING,
     findError,
-    ERROR_NOTFOUND
+    ERROR_NOTFOUND,
+    ERROR_INVALID_PARAM_VALUE
 } from '../../errors';
 
 const listSourceSchema = {
@@ -65,7 +65,12 @@ const SourceSchema = {
 };
 
 export function buildAdminSourcesRoutes(deps) {
-    const { sourcesService } = deps(['sourcesService']);
+    const {
+        sourcesService,
+        mappingsService,
+        targetsService,
+        responsesService
+    } = deps(['sourcesService', 'mappingsService', 'targetsService', 'responsesService']);
 
     async function listSources(request, reply) {
         try {
@@ -110,7 +115,7 @@ export function buildAdminSourcesRoutes(deps) {
     }
 
     async function createSource(request, reply) {
-        const body = request.body || {};
+        const body = request.body;
         let errors = null;
         const missingParams = [
             'name',
@@ -125,9 +130,39 @@ export function buildAdminSourcesRoutes(deps) {
         }
 
         try {
+            const invalidParams = [];
+            const flows = body.flows;
+            if (flows) {
+                if (Array.isArray(flows)) {
+                    // Check each flow
+                    for (const flow of flows) {
+                        const targetId = flow.targetId;
+                        const target = await targetsService.getTargetById(targetId);
+                        if (!target) invalidParams.push({targetId: targetId || null});
+                        const mappingId = flow.mappingId;
+                        if (mappingId) {
+                            const mapping = await mappingsService.getMappingById(mappingId);
+                            if (!mapping) invalidParams.push({mappingId});
+                        }
+                    }
+                } else {
+                    invalidParams.push({flows});
+                }
+            }
+            const responseId = body.responseId;
+            if (responseId) {
+                const response = await responsesService.getResponseById(responseId);
+                if (!response) invalidParams.push({responseId});
+            }
+            if (invalidParams.length > 0) {
+                errors = encodeError(errors, ERROR_INVALID_PARAM_VALUE.code, ERROR_INVALID_PARAM_VALUE.message, {params: invalidParams});
+                return void reply.code(400).send(errors);
+            }
             const source = {
                 name: body.name,
-                description: body.description
+                description: body.description,
+                flows,
+                responseId,
             };
             const inserted = await sourcesService.insertSource(source);
             return void reply.code(200).send(inserted);
