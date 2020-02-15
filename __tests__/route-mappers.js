@@ -65,7 +65,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
 
         const response = await server.inject({
@@ -89,7 +89,7 @@ describe('Route mapper', () => {
                         params: { sourceId: '', id: '25'},
                         body: { name: 'Juanjo', temperature: 25.5 },
                         headers: {
-                            timestamp: 123456789,
+                            timestamp: '123456789',
                             'x-appid': 'tribeca',
                             'content-type': 'application/json',
                             'user-agent': 'lightMyRequest',
@@ -108,7 +108,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
 
         const response = await server.inject({
@@ -132,7 +132,7 @@ describe('Route mapper', () => {
                         params: { sourceId: 'sourceidnotvalid', id: '25'},
                         body: { name: 'Juanjo', temperature: 25.5 },
                         headers: {
-                            timestamp: 123456789,
+                            timestamp: '123456789',
                             'x-appid': 'tribeca',
                             'content-type': 'application/json',
                             'user-agent': 'lightMyRequest',
@@ -151,7 +151,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
 
         const response = await server.inject({
@@ -175,7 +175,7 @@ describe('Route mapper', () => {
                         params: { sourceId: 'null', id: '25'},
                         body: { name: 'Juanjo', temperature: 25.5 },
                         headers: {
-                            timestamp: 123456789,
+                            timestamp: '123456789',
                             'x-appid': 'tribeca',
                             'content-type': 'application/json',
                             'user-agent': 'lightMyRequest',
@@ -194,7 +194,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
         const sourcesService = buildSourcesService(EMPTY_OBJECT);
         const overDeps = overridedDeps(deps, {sourcesService});
@@ -221,7 +221,7 @@ describe('Route mapper', () => {
                         params: { sourceId, id: '25'},
                         body: { name: 'Juanjo', temperature: 25.5 },
                         headers: {
-                            timestamp: 123456789,
+                            timestamp: '123456789',
                             'x-appid': 'tribeca',
                             'content-type': 'application/json',
                             'user-agent': 'lightMyRequest',
@@ -240,7 +240,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 25.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
         const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
             name: sourceName
@@ -266,7 +266,7 @@ describe('Route mapper', () => {
                         params: { sourceId: sourceInserted + '', id: '25'},
                         body: { name: 'Juanjo', temperature: 25.5 },
                         headers: {
-                            timestamp: 123456789,
+                            timestamp: '123456789',
                             'x-appid': 'tribeca',
                             'content-type': 'application/json',
                             'user-agent': 'lightMyRequest',
@@ -285,7 +285,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: {name: 'Juanjo', temperature: 28.5},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
         const flow1 = await createFakeFlow(
             mappingsCollection,
@@ -329,7 +329,7 @@ describe('Route mapper', () => {
                   params: { sourceId: sourceInserted + '', id: '25' },
                   body: method === 'GET' ? null : { name: 'Juanjo', temperature: 28.5 },
                   headers: {
-                    timestamp: 123456789,
+                    timestamp: '123456789',
                     'x-appid': 'tribeca',
                     'content-type': 'application/json',
                     'user-agent': 'lightMyRequest',
@@ -375,7 +375,7 @@ describe('Route mapper', () => {
         const context = {
             params: {id: 25},
             body: 'value=anyvalue&value2=othervalue',
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/x-www-form-urlencoded'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/x-www-form-urlencoded'}
         };
         const target = {
             name: 'targettest1',
@@ -418,7 +418,7 @@ describe('Route mapper', () => {
                     value2: 'othervalue'
                 },
                 headers: {
-                    timestamp: 123456789,
+                    timestamp: '123456789',
                     'x-appid': 'tribeca',
                     'content-type': 'application/x-www-form-urlencoded',
                     'user-agent': 'lightMyRequest',
@@ -451,7 +451,7 @@ describe('Route mapper', () => {
         const sourceName = 'testsourcename1';
         const context = {
             params: {id: 25, value: 'anyvalue', value2: 'othervalue'},
-            headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca'}
         };
         const target = {
             name: 'targettest1',
@@ -498,7 +498,7 @@ describe('Route mapper', () => {
                 params: { id: '25', sourceId: sourceInserted + '', value: 'anyvalue', value2: 'othervalue'},
                 body: null,
                 headers: {
-                    timestamp: 123456789,
+                    timestamp: '123456789',
                     'x-appid': 'tribeca',
                     'user-agent': 'lightMyRequest',
                     host: 'localhost:80'
@@ -807,7 +807,7 @@ describe('Route mapper', () => {
             body: {
                 type: 'temperature',
                 value: 24.4,
-                timestamp: 123456789
+                timestamp: '123456789'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
@@ -883,7 +883,7 @@ describe('Route mapper', () => {
             body: {
                 type: 'temperature',
                 value: 24.4,
-                timestamp: 123456789
+                timestamp: '123456789'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
