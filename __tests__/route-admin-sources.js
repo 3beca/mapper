@@ -316,7 +316,7 @@ describe('admin', () => {
                 payload: {
                     name: 'MyFirstSingleSource',
                     description: 'my first source map without flow nor response',
-                    serial: false
+                    serial: true
                 }
             });
 
@@ -325,7 +325,8 @@ describe('admin', () => {
                 {
                     _id: expect.any(String),
                     name: 'MyFirstSingleSource',
-                    description: 'my first source map without flow nor response'
+                    description: 'my first source map without flow nor response',
+                    serial: true
                 }
             );
         });
@@ -623,7 +624,7 @@ describe('admin', () => {
                     name: 'avalidsourceonlywithresponse',
                     description: 'my first source map',
                     responseId: responseId,
-                    serial: false
+                    serial: true
                 }
             });
 
@@ -633,7 +634,8 @@ describe('admin', () => {
                 _id: expect.any(String),
                 name: 'avalidsourceonlywithresponse',
                 description: 'my first source map',
-                responseId
+                responseId,
+                serial: true
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -642,7 +644,8 @@ describe('admin', () => {
                 _id: sourceInDB._id + '',
                 name: sourceInDB.name,
                 description: sourceInDB.description,
-                responseId: sourceInDB.responseId
+                responseId: sourceInDB.responseId,
+                serial: true
             });
         });
 
@@ -683,7 +686,8 @@ describe('admin', () => {
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
                 flows: [flow],
-                responseId
+                responseId,
+                serial: false
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -693,7 +697,8 @@ describe('admin', () => {
                 name: sourceInDB.name,
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
-                responseId: sourceInDB.responseId
+                responseId: sourceInDB.responseId,
+                serial: false
             });
         });
 
@@ -732,7 +737,7 @@ describe('admin', () => {
                     description: 'my first source map',
                     flows: [flow1, flow2],
                     responseId: responseId,
-                    serial: false
+                    serial: true
                 }
             });
 
@@ -743,7 +748,8 @@ describe('admin', () => {
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
                 flows: [flow1, flow2],
-                responseId
+                responseId,
+                serial: true
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -753,7 +759,8 @@ describe('admin', () => {
                 name: sourceInDB.name,
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
-                responseId: sourceInDB.responseId
+                responseId: sourceInDB.responseId,
+                serial: true
             });
         });
 
@@ -785,7 +792,8 @@ describe('admin', () => {
                 _id: expect.any(String),
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
-                flows: [flow]
+                flows: [flow],
+                serial: false
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -795,7 +803,8 @@ describe('admin', () => {
                 name: sourceInDB.name,
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
-                responseId: sourceInDB.responseId
+                responseId: sourceInDB.responseId,
+                serial: false
             });
         });
 
@@ -815,7 +824,7 @@ describe('admin', () => {
                     name: 'avalidsourcefulloptions',
                     description: 'my first source map',
                     flows: [{targetId}],
-                    serial: false
+                    serial: true
                 }
             });
 
@@ -825,7 +834,8 @@ describe('admin', () => {
                 _id: expect.any(String),
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
-                flows: [{targetId}]
+                flows: [{targetId}],
+                serial: true
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -835,7 +845,8 @@ describe('admin', () => {
                 name: sourceInDB.name,
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
-                responseId: sourceInDB.responseId
+                responseId: sourceInDB.responseId,
+                serial: true
             });
         });
 

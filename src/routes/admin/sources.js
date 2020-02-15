@@ -163,6 +163,7 @@ export function buildAdminSourcesRoutes(deps) {
                 description: body.description,
                 flows,
                 responseId,
+                serial: body.serial || false
             };
             const inserted = await sourcesService.insertSource(source);
             return void reply.code(200).send(inserted);
