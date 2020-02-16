@@ -2,16 +2,14 @@ import { buildServer } from './server';
 import { createDependencies } from './dependencies';
 import config from './config';
 import gracefulShutdown from './graceful-shutdown';
-import { buildSourcesService } from './services/sources';
-import { buildMappingsService } from './services/mappings';
-import { buildTargetsService } from './services/targets';
-import { buildResponsesService } from './services/responses';
 import logger from './logger';
+import { registerFilters } from './utils/liquid-filters';
 
 async function main() {
     const { port, host } = config.http;
 
     logger.info('starting Mapper service');
+    registerFilters();
 
     const deps = await createDependencies();
     const server = buildServer(deps);
