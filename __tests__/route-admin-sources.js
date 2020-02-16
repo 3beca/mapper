@@ -206,7 +206,7 @@ describe('admin', () => {
                 url: '/admin/sources/' + sourceId
             });
             expect(response.statusCode).toBe(200);
-            expect(JSON.parse(response.payload)).toEqual({...expectedSource, _id: sourceId + ''});
+            expect(JSON.parse(response.payload)).toEqual({...expectedSource, _id: sourceId + '', url: expect.stringContaining('/mappers/' + sourceId)});
         });
     });
 
@@ -326,7 +326,8 @@ describe('admin', () => {
                     _id: expect.any(String),
                     name: 'MyFirstSingleSource',
                     description: 'my first source map without flow nor response',
-                    serial: true
+                    serial: true,
+                    url: expect.stringContaining('/mappers/')
                 }
             );
         });
@@ -635,7 +636,7 @@ describe('admin', () => {
                 name: 'avalidsourceonlywithresponse',
                 description: 'my first source map',
                 responseId,
-                serial: true
+                serial: true, url: expect.stringContaining('/mappers/')
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -645,7 +646,8 @@ describe('admin', () => {
                 name: sourceInDB.name,
                 description: sourceInDB.description,
                 responseId: sourceInDB.responseId,
-                serial: true
+                serial: true,
+                url: expect.stringContaining('/mappers/' + sourceInDB._id)
             });
         });
 
@@ -687,7 +689,8 @@ describe('admin', () => {
                 description: 'my first source map',
                 flows: [flow],
                 responseId,
-                serial: false
+                serial: false,
+                url: expect.stringContaining('/mappers/' + sourceCreated._id)
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -698,7 +701,8 @@ describe('admin', () => {
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
                 responseId: sourceInDB.responseId,
-                serial: false
+                serial: false,
+                url: expect.stringContaining('/mappers/' + sourceInDB._id)
             });
         });
 
@@ -749,7 +753,8 @@ describe('admin', () => {
                 description: 'my first source map',
                 flows: [flow1, flow2],
                 responseId,
-                serial: true
+                serial: true,
+                url: expect.stringContaining('/mappers/' + sourceCreated._id)
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -760,7 +765,8 @@ describe('admin', () => {
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
                 responseId: sourceInDB.responseId,
-                serial: true
+                serial: true,
+                url: expect.stringContaining('/mappers/' + sourceInDB._id)
             });
         });
 
@@ -793,7 +799,8 @@ describe('admin', () => {
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
                 flows: [flow],
-                serial: false
+                serial: false,
+                url: expect.stringContaining('/mappers/' + sourceCreated._id)
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
@@ -804,7 +811,8 @@ describe('admin', () => {
                 description: sourceInDB.description,
                 flows: sourceInDB.flows,
                 responseId: sourceInDB.responseId,
-                serial: false
+                serial: false,
+                url: expect.stringContaining('/mappers/' + sourceInDB._id)
             });
         });
 
@@ -835,18 +843,20 @@ describe('admin', () => {
                 name: 'avalidsourcefulloptions',
                 description: 'my first source map',
                 flows: [{targetId}],
-                serial: true
+                serial: true,
+                url: expect.stringContaining('/mappers/' + sourceCreated._id)
             });
 
             const sourceInDB = await sourcesService.getSourceById(sourceCreated._id);
             expect(sourceInDB).not.toBe(null);
             expect(sourceCreated).toEqual({
-                _id: sourceInDB._id + '',
-                name: sourceInDB.name,
-                description: sourceInDB.description,
-                flows: sourceInDB.flows,
-                responseId: sourceInDB.responseId,
-                serial: true
+                _id: sourceCreated._id + '',
+                name: sourceCreated.name,
+                description: sourceCreated.description,
+                flows: sourceCreated.flows,
+                responseId: sourceCreated.responseId,
+                serial: true,
+                url: expect.stringContaining('/mappers/' + sourceCreated._id)
             });
         });
 

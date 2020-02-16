@@ -4,7 +4,7 @@ import {
 } from '../errors';
 
 export const buildMapperService = (mappingsService, targetsService, httpEngineService) => async (source, context) => {
-    if (!source) return {requests: []};
+    if (!source || !Array.isArray(source.flows)) return {requests: []};
     const requests = [];
     let errors;
     for (const {mappingId, targetId} of source.flows) {

@@ -235,7 +235,7 @@ describe('Route mapper', () => {
         );
     });
 
-    it('should return 400 when source is not completed', async () => {
+    it('should return 200 with emty delivered array when source has not flows', async () => {
         const sourceName = 'testsourcename1';
         const context = {
             params: {id: 25},
@@ -253,6 +253,54 @@ describe('Route mapper', () => {
             payload: context.body,
             headers: context.headers
         });
+        expect(response.statusCode).toBe(200);
+        expect(JSON.parse(response.payload)).toEqual({
+            sourceId: sourceInserted + '',
+            delivered: [],
+            context: {
+                method: 'POST',
+                params: { sourceId: sourceInserted + '', id: '25'},
+                body: { name: 'Juanjo', temperature: 25.5 },
+                headers: {
+                    timestamp: '123456789',
+                    'x-appid': 'tribeca',
+                    'content-type': 'application/json',
+                    'user-agent': 'lightMyRequest',
+                    'host': 'localhost:80',
+                    'content-length': '36'
+                }
+            }
+        });
+    });
+
+    it('should return 400 Error Mapper when request fails', async () => {
+        const sourceName = 'testsourcename1';
+        const context = {
+            params: {id: 25},
+            body: {name: 'Juanjo', temperature: 25.5},
+            headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+        };
+        const flow = await createFakeFlow(
+            mappingsCollection,
+            targetsCollection,
+            'Soy {{body.name}} y estoy a {{body.temperature}} grados!',
+            '{"content-type": "text/html"}',
+            'http2://notifier.triveca.ovh/',
+            'POST',
+            'InvalidTargetRequest'
+        );
+        const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
+            name: sourceName,
+            flows: [flow]
+        });
+
+        const response = await server.inject({
+            method: 'POST',
+            url: '/mappers/' + sourceInserted,
+            query: context.params,
+            payload: context.body,
+            headers: context.headers
+        });
         expect(response.statusCode).toBe(400);
         expect(JSON.parse(response.payload)).toEqual(
             encodeError(
@@ -260,21 +308,27 @@ describe('Route mapper', () => {
                 ERROR_MAPPER.code,
                 ERROR_MAPPER.message,
                 {
-                    sourceId: sourceInserted + '',
                     context: {
-                        method: 'POST',
-                        params: { sourceId: sourceInserted + '', id: '25'},
-                        body: { name: 'Juanjo', temperature: 25.5 },
+                            body: {
+                            name: 'Juanjo',
+                            temperature: 25.5,
+                        },
                         headers: {
-                            timestamp: '123456789',
-                            'x-appid': 'tribeca',
+                            'content-length': '36',
                             'content-type': 'application/json',
-                            'user-agent': 'lightMyRequest',
                             'host': 'localhost:80',
-                            'content-length': '36'
-                        }
+                            'timestamp': '123456789',
+                            'user-agent': 'lightMyRequest',
+                            'x-appid': 'tribeca',
+                        },
+                        method: 'POST',
+                        params: {
+                            id: '25',
+                            sourceId: sourceInserted + '',
+                        },
                     },
-                    details: 'source.flows is not iterable'
+                    details: 'Only HTTP(S) protocols are supported',
+                    sourceId: sourceInserted + '',
                 }
             )
         );

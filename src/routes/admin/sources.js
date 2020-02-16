@@ -47,6 +47,7 @@ const SourceSchema = {
                 _id: { type: 'string' },
                 name: { type: 'string' },
                 description: { type: 'string' },
+                url: { type: 'string' },
                 flows: {
                     type: 'array',
                     items: {

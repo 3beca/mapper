@@ -65,7 +65,8 @@ describe(
                     {
                         name: 'nameforsource1',
                         description: '',
-                        template: ''
+                        template: '',
+                        url: ''
                     },
                     {
                         name: 'nameforsource2',
@@ -77,7 +78,22 @@ describe(
 
                 const sources = await service.getSources();
 
-                expect(sources).toEqual(expectedsources);
+                expect(sources).toEqual(expect.arrayContaining([
+                    expect.objectContaining({
+                        _id: expect.anything(),
+                        name: 'nameforsource1',
+                        description: '',
+                        template: '',
+                        url: expect.stringContaining('/mappers/')
+                    }),
+                    expect.objectContaining({
+                        _id: expect.anything(),
+                        name: 'nameforsource2',
+                        description: '',
+                        template: '',
+                        url: expect.stringContaining('/mappers/')
+                    })
+                ]));
             }
         );
     }
@@ -170,7 +186,7 @@ describe(
 
                 const sources = await service.getSourceById(insertedId);
 
-                expect(sources).toEqual({...expectedsource, _id: insertedId});
+                expect(sources).toEqual({...expectedsource, _id: insertedId, url: expect.stringContaining('/mappers/' + insertedId)});
             }
         );
     }
@@ -260,12 +276,13 @@ describe(
                 const responseInserted = await service.insertSource(responseObject);
 
                 expect(responseInserted).toEqual({
-                    _id: expect.anything(),
+                    _id: responseInserted._id,
                     name: responseInserted.name,
                     description: responseInserted.description,
                     flows: responseInserted.flows,
                     responseId: responseInserted.responseId,
-                    serial: responseInserted.serial
+                    serial: responseInserted.serial,
+                    url: expect.stringContaining('/mappers/' + responseInserted._id)
                 });
             }
         );
