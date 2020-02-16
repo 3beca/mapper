@@ -661,7 +661,7 @@ describe('Route mapper', () => {
         }));
     });
 
-    it('should return 200 with an error when receive a GET request but responseId is not found', async () => {
+    it('should return 200 with an error when receive a GET request but responseId is invalid', async () => {
         const sourceName = 'testsourcename1';
         const context = {
             params: {
@@ -673,7 +673,7 @@ describe('Route mapper', () => {
         const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
             name: sourceName,
             flows: [],
-            responseId: '123456789876'
+            responseId: '1234789876'
         });
 
         const response = await server.inject({
@@ -691,7 +691,41 @@ describe('Route mapper', () => {
             date: expect.any(String),
         }));
         expect(JSON.parse(response.payload)).toEqual(expect.objectContaining({
-            errors: [{code: 1004, message: 'Invalid responseId', meta: {details: 'Response Mapping not found'}}]
+            errors: [{code: 1004, message: 'Invalid responseId', meta: {details: 'Argument passed in must be a single String of 12 bytes or a string of 24 hex characters'}}]
+        }));
+    });
+
+    it('should return 200 with an error when receive a GET request but responseId is not found', async () => {
+        const sourceName = 'testsourcename1';
+        const context = {
+            params: {
+                id: 25,
+                timestamp: 12345678
+            },
+            headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
+        };
+        const { insertedId: sourceInserted} = await sourcesCollection.insertOne({
+            name: sourceName,
+            flows: [],
+            responseId: '123456545678'
+        });
+
+        const response = await server.inject({
+            method: 'GET',
+            url: '/mappers/' + sourceInserted,
+            query: context.params,
+            payload: context.body,
+            headers: context.headers
+        });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.headers).toEqual(expect.objectContaining({
+            connection: 'keep-alive',
+            'content-type': 'application/json; charset=utf-8',
+            date: expect.any(String),
+        }));
+        expect(JSON.parse(response.payload)).toEqual(expect.objectContaining({
+            delivered: []
         }));
     });
 

@@ -3,6 +3,17 @@ import {
     hasContentTypeJson,
     parseHeadersFromFetch
 } from '../utils/parse-headers';
+import { logger } from '../utils/logger';
+
+const responseJson = async (response) => {
+    try {
+        return await response.json();
+    }
+    catch (error) {
+        // console.log('Response error', error);
+        return '';
+    }
+};
 
 export const requester = async (requests) => {
     if (!requests) return [];
@@ -28,7 +39,7 @@ export const requester = async (requests) => {
         const response = responsesPromises[i];
         const statusResponse = response.status;
         const headersResponse = parseHeadersFromFetch(response);
-        const bodyResponse = hasContentTypeJson(headersResponse) ? await response.json() : await response.text();
+        const bodyResponse = (statusResponse != 204) && hasContentTypeJson(headersResponse) ? await responseJson(response) : await response.text();
         responses.push({
             request: requests[i],
             response: {
@@ -37,6 +48,7 @@ export const requester = async (requests) => {
                 body: bodyResponse
             }
         });
+        logger('Requests>', requests[i].url, `[${requests[i].method}]`, 'Response: ', statusResponse);
     }
     return responses;
 };
@@ -61,7 +73,7 @@ export const requesterSerial = async (requests) => {
         );
         const statusResponse = response.status;
         const headersResponse = parseHeadersFromFetch(response);
-        const bodyResponse = hasContentTypeJson(headersResponse) ? await response.json() : await response.text();
+        const bodyResponse = (statusResponse != 204) && hasContentTypeJson(headersResponse) ? await responseJson(response) : await response.text();
         responses.push({
             request,
             response: {
@@ -70,6 +82,7 @@ export const requesterSerial = async (requests) => {
                 body: bodyResponse
             }
         });
+        logger('Requests>', request.url, `[${request.method}]`, 'Response: ', statusResponse);
     }
     return responses;
 };

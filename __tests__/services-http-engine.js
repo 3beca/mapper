@@ -57,6 +57,50 @@ describe(
         );
 
         it(
+            'return a transformed request when receive a valid source, mapping and target with binary format',
+            async () => {
+                const context = {
+                    name: 'testsource1',
+                    params: {id: 25},
+                    body: {name: 'Juanjo', temperature: 25},
+                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                };
+                const mapping = {
+                    name: 'mappingtest1',
+                    template: '{"title":"Bienvenido {{body.name}}","body":"La temperatura de casa es de {{body.temperature}}ºC","data":{"id":{{params.id}},"temperature":{{body.temperature}},"name":"{{body.name}}"}}'
+                };
+                const target = {
+                    method: 'POST',
+                    headers: '{"content-type": "application/json", "accept": "application/json", "X-APPID": "{{headers[\'X-APPID\']}}", "timestamp": {{headers.timestamp}}}',
+                    url: 'https://notifier.triveca.ovh/{{params.id}}?date={{headers.timestamp}}',
+                    encoding: 'binary'
+                };
+
+                const request = await transformSource(context, mapping.template, target);
+
+                expect(request).not.toBe(null);
+                expect(request.method).toBe('POST');
+                expect(request.url).toEqual('https://notifier.triveca.ovh/25?date=123456789');
+                expect(request.body).toEqual(Buffer.from(JSON.stringify({
+                    title: 'Bienvenido Juanjo',
+                    body: 'La temperatura de casa es de 25ºC',
+                    data: {
+                        id: 25,
+                        temperature: 25,
+                        name: 'Juanjo'
+                    }
+                })));
+                expect(request.headers).toEqual(expect.objectContaining({
+                    'content-type': 'application/json',
+                    'accept': 'application/json',
+                    'X-APPID': 'tribeca',
+                    timestamp: 123456789
+                }));
+
+            }
+        );
+
+        it(
             'return a transformed request without context',
             async () => {
                 const context = undefined;

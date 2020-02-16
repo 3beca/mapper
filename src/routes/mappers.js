@@ -7,6 +7,7 @@ import {
 } from '../errors';
 import { encodeError } from '../utils/error-encoder';
 import { transformResponse } from '../services/http-engine';
+import { logger } from '../utils/logger';
 
 const mapperSchema = {
     tags: ['mappers'],
@@ -70,6 +71,7 @@ export const mapperFlow = (deps) => {
         }
 
         try {
+            logger('Mappers>', source.name, `[${request.raw.method}]`);
             const {requests, errors} = await mapperService(source, context);
             const responses = !source.serial ? await requesterService.requester(requests) : await requesterService.requesterSerial(requests);
 
@@ -85,7 +87,14 @@ export const mapperFlow = (deps) => {
             let responseMapping;
             try {
                 responseMapping = await responsesService.getResponseById(source.responseId);
-                if (!responseMapping) throw new Error('Response Mapping not found');
+                if (!responseMapping) {
+                    return reply.code(200).send({
+                        sourceId: sourceId,
+                        responseId: source.responseId,
+                        context: context,
+                        delivered: responses
+                    });
+                }
             }
             catch (error) {
                 const errorswithmapping = encodeError(errors, ERROR_RESPONSE_ID.code, ERROR_RESPONSE_ID.message, {details: error.message});
@@ -105,6 +114,7 @@ export const mapperFlow = (deps) => {
                     ...errors
                 };
                 const response = await transformResponse(responseContext, responseMapping);
+                logger('Response>', responseMapping.name, `[${response.status}]`);
                 return reply.code(response.status).headers(response.headers || {}).send(response.body);
             }
             catch (error) {

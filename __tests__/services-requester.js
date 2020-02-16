@@ -202,6 +202,32 @@ describe(
                 expect(responses[0].response.headers).toEqual({ 'content-type': 'text/plain' });
             }
         );
+
+        it(
+            'receive an array of one Request which response has 200 json but without body',
+            async () => {
+                const req1 = createGetRequest(
+                    'https://notifier.tribeca.ovh',
+                    '/25?date=123456789',
+                    {'Content-Type': 'application/json'},
+                    200,
+                    undefined,
+                    {'content-type': 'application/json'}
+                );
+                delete req1.method;
+                const requests = [req1];
+
+
+                const responses = await requester(requests);
+
+                expect(Array.isArray(responses)).toBe(true);
+                expect(responses.length).toBe(1);
+                expect(responses[0].request).toEqual(req1);
+                expect(responses[0].response.status).toBe(200);
+                expect(responses[0].response.body).toEqual('');
+                expect(responses[0].response.headers).toEqual({ 'content-type': 'application/json' });
+            }
+        );
     }
 );
 
@@ -399,6 +425,32 @@ describe(
                 expect(responses[0].response.status).toBe(200);
                 expect(responses[0].response.body).toEqual('<html><body><div>Hola</div></body></html>');
                 expect(responses[0].response.headers).toEqual({ 'content-type': 'text/plain' });
+            }
+        );
+
+        it(
+            'receive an array of one Request which response has 200 json but without body',
+            async () => {
+                const req1 = createGetRequest(
+                    'https://notifier.tribeca.ovh',
+                    '/25?date=123456789',
+                    {'Content-Type': 'application/json'},
+                    200,
+                    undefined,
+                    {'content-type': 'application/json'}
+                );
+                delete req1.method;
+                const requests = [req1];
+
+
+                const responses = await requesterSerial(requests);
+
+                expect(Array.isArray(responses)).toBe(true);
+                expect(responses.length).toBe(1);
+                expect(responses[0].request).toEqual(req1);
+                expect(responses[0].response.status).toBe(200);
+                expect(responses[0].response.body).toEqual('');
+                expect(responses[0].response.headers).toEqual({ 'content-type': 'application/json' });
             }
         );
     }

@@ -72,6 +72,9 @@ export const transformSource = async (context = {}, template, target) => {
     }
     if (!template) return {method, url, headers};
     const body = await checkTemplate(context, template, hasContentTypeJson(headers));
+    if (target.encoding === 'binary') {
+        return {method, url, body: Buffer.from(body), headers};
+    }
     return {method, url, body, headers};
 };
 
