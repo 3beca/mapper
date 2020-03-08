@@ -1,5 +1,4 @@
-import { Liquid } from 'liquidjs';
-import { registerFilters } from '../src/utils/liquid-filters';
+import { createLiquidEngine } from '../src/utils/liquid-engine';
 
 let liquidEngine;
 const parseTemplate = async (source, template) => {
@@ -12,8 +11,7 @@ describe(
     () => {
         beforeAll(
             () => {
-                registerFilters();
-                liquidEngine = new Liquid();
+                liquidEngine = createLiquidEngine();
             }
         );
 
