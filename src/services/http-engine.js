@@ -1,4 +1,4 @@
-import { Liquid } from 'liquidjs';
+import { createLiquidEngine } from '../utils/liquid-engine';
 import { applyProxy } from '../utils/apply-proxy';
 import { hasContentTypeJson } from '../utils/parse-headers';
 import { throwError } from '../utils/error-encoder';
@@ -9,7 +9,7 @@ import {
     ERROR_HEADER_FORMAT
 } from '../errors';
 
-const liquidEngine = new Liquid();
+const liquidEngine = createLiquidEngine();
 
 const parseTemplate = async (source, template) => {
     if (!template) return undefined;
