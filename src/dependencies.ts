@@ -23,8 +23,7 @@ export type DependenciesConfig = {
     TARGETS?: string;
     RESPONSES?: string;
 };
-export type DependenciesName = 'config'|'dbClient'|'db'|'sourcesCollection'|'sourcesService'|'mappingsCollection'|'mappingsService'|'targetsCollection'|'targetsService'
-|'responsesCollection'|'responsesService'|'responsesService'|'mapperService'|'requesterService';
+
 export type DependenciesArray = DependenciesName[];
 export type Dependencies = {
     config: DependenciesConfig;
@@ -42,7 +41,7 @@ export type Dependencies = {
     httpEngineService: HttpEngineService;
     requesterService: RequesterService;
 };
-
+export type DependenciesName = keyof Dependencies;
 export type DependenciesLoader = (deps?: DependenciesArray) => Dependencies;
 export async function createDependencies(
     {
