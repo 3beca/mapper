@@ -64,7 +64,7 @@ describe('Route mapper', () => {
 
     it('should return ERROR SOURCE_ID when sourceid not sent', async () => {
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -106,7 +106,7 @@ describe('Route mapper', () => {
     it('should return ERROR SOURCE_ID when sourceid is not valid', async () => {
         const sourceId = 'sourceidnotvalid';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -148,7 +148,7 @@ describe('Route mapper', () => {
     it('should return ERROR SOURCE_ID when sourceid is null', async () => {
         const sourceId = null;
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -190,7 +190,7 @@ describe('Route mapper', () => {
     it('should return 400 Error when mongodb fails', async () => {
         const sourceId = '5dd9ad23c6ba9f08af08b097';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -201,7 +201,7 @@ describe('Route mapper', () => {
         const response = await server.inject({
             method: 'POST',
             url: '/mappers/' + sourceId,
-            query: context.params,
+            query: context.params as {[key: string]: string;},
             payload: context.body,
             headers: context.headers
         });
@@ -235,7 +235,7 @@ describe('Route mapper', () => {
     it('should return 200 with emty delivered array when source has not flows', async () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -273,7 +273,7 @@ describe('Route mapper', () => {
     it('should return 400 Error Mapper when request fails', async () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 25.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -333,7 +333,7 @@ describe('Route mapper', () => {
     it('should return 200 when receive a GET, POST, PUT, PATCH or DELETE request and fire a POST request', async () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: {name: 'Juanjo', temperature: 28.5},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
         };
@@ -423,7 +423,7 @@ describe('Route mapper', () => {
     it('should return 200 when receive a POST with url encoded params request and fire a GET request', async () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
-            params: {id: 25},
+            params: {'id': '25'},
             body: 'value=anyvalue&value2=othervalue',
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/x-www-form-urlencoded'}
         };
@@ -500,7 +500,7 @@ describe('Route mapper', () => {
     it('should return 200 when receive a GET with params request and fire a POST request with url encoded params', async () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
-            params: {id: 25, value: 'anyvalue', value2: 'othervalue'},
+            params: {'id': '25', 'value': 'anyvalue', 'value2': 'othervalue'},
             headers: {timestamp: '123456789', 'X-APPID': 'tribeca'}
         };
         const target = {
@@ -583,8 +583,8 @@ describe('Route mapper', () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
             params: {
-                id: 25,
-                timestamp: 12345678
+                'id': '25',
+                'timestamp': '12345678'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
@@ -622,8 +622,8 @@ describe('Route mapper', () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
             params: {
-                id: 25,
-                timestamp: 12345678
+                'id': '25',
+                'timestamp': '12345678'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
@@ -661,8 +661,8 @@ describe('Route mapper', () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
             params: {
-                id: 25,
-                timestamp: 12345678
+                'id': '25',
+                'timestamp': '12345678'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };
@@ -695,8 +695,8 @@ describe('Route mapper', () => {
         const sourceName = 'testsourcename1';
         const context: ContextRequest = {
             params: {
-                id: 25,
-                timestamp: 12345678
+                'id': '25',
+                'timestamp': '12345678'
             },
             headers: {'X-APPID': 'tribeca', 'Content-Type': 'application/json'}
         };

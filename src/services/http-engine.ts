@@ -26,7 +26,7 @@ export type ResponseTransformed = {
 };
 export type ContextRequest = {
     method?: string,
-    params?: object,
+    params?: {[key: string]: string},
     body?: any,
     headers?: DefaultHeaders,
     responses?: any[],
