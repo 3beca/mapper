@@ -477,7 +477,7 @@ describe(
                 expect.assertions(1);
                 const sourceName = 'testsourcename1';
                 const context = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25.5},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };

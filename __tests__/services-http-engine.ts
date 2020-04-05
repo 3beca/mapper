@@ -21,7 +21,7 @@ describe(
             'return a transformed request when receive a valid source, mapping and target',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -64,7 +64,7 @@ describe(
             'return a transformed request when receive a valid source, mapping and target with binary format',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -146,7 +146,7 @@ describe(
             'return a response without body when mapping is undefined',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -178,7 +178,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -207,7 +207,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -231,7 +231,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -260,7 +260,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -288,7 +288,7 @@ describe(
             'return a valid response when target do not expecify method',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -320,7 +320,7 @@ describe(
             'return a valid response when template is text',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -353,7 +353,7 @@ describe(
             'return a valid response without body when template undefined',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -382,7 +382,7 @@ describe(
             'return a valid response when headers is undefined',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -411,7 +411,7 @@ describe(
             'return a valid response when body is undefined',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: undefined,
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -441,7 +441,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25}
                 };
                 const mapping: Mapping = {
@@ -474,7 +474,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -537,7 +537,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -586,7 +586,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
@@ -680,7 +680,7 @@ describe(
             'return a transformed response when receive a valid mapping',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 5},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -735,7 +735,7 @@ describe(
             'return a valid response when template is text',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -763,7 +763,7 @@ describe(
             'return a valid response when body is undefined',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: undefined,
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -786,7 +786,7 @@ describe(
             'return a valid response using responses from context',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: undefined,
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'},
                     responses: [
@@ -834,7 +834,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -853,7 +853,7 @@ describe(
             'return a json object when receive a valid template',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -875,7 +875,7 @@ describe(
             async () => {
                 expect.assertions(1);
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
@@ -894,7 +894,7 @@ describe(
             'return a headers object when receive a valid tempalte',
             async () => {
                 const context: ContextRequest = {
-                    params: {id: 25},
+                    params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
                     headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
                 };
