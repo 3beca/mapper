@@ -14,7 +14,7 @@ import {
     createPostRequest,
     createGetRequest,
     createDeleteRequest
-} from '../tests-utils/mock-requsts';
+} from '../tests-utils/mock-requests';
 import {
     EMPTY_OBJECT
 } from '../tests-utils/dependencies';

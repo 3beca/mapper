@@ -4,7 +4,7 @@ import {
     createPostRequest,
     createPutRequest,
     createDeleteRequest
-} from '../tests-utils/mock-requsts';
+} from '../tests-utils/mock-requests';
 import { SourceTransformed } from '../src/services/http-engine';
 
 describe(

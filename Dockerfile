@@ -10,4 +10,4 @@ RUN npm ci
 
 COPY ./build ./build
 
-CMD ["node", "build/main.js"]
+CMD ["node", "build/src/main.js"]
