@@ -43,7 +43,7 @@ export const mapperFlow = (deps: DependenciesLoader) => {
         }
         let source;
         try {
-            source = await sourcesService!.getSourceById(sourceId);
+            source = await sourcesService.getSourceById(sourceId);
         }
         catch (error) {
             return reply.code(400).headers(
@@ -66,7 +66,7 @@ export const mapperFlow = (deps: DependenciesLoader) => {
         try {
             logger('Mappers>', source.name, `[${request.raw.method}]`);
             const {requests, errors} = await mapperService!(source, context);
-            const responses = !source.serial ? await requesterService!.requester(requests) : await requesterService!.requesterSerial(requests);
+            const responses = !source.serial ? await requesterService.requester(requests) : await requesterService.requesterSerial(requests);
 
             if (!source.responseId) {
                 return reply.code(200).send({
@@ -79,7 +79,7 @@ export const mapperFlow = (deps: DependenciesLoader) => {
 
             let responseMapping;
             try {
-                responseMapping = await responsesService!.getResponseById(source.responseId);
+                responseMapping = await responsesService.getResponseById(source.responseId);
                 if (!responseMapping) {
                     return reply.code(200).send({
                         sourceId: sourceId,

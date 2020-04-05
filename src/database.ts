@@ -18,7 +18,7 @@ export function connect(uri: string): Promise<MongoClient> {
 }
 
 export async function getAndSetupDatabase(client: MongoClient, databaseName: string): Promise<Db> {
-    const db: Db = client.db(databaseName);
+    const db = client.db(databaseName);
     const sources = db.collection(COLLECTION_SOURCES);
     const targets = db.collection(COLLECTION_TARGETS);
     const mappings = db.collection(COLLECTION_MAPPINGS);

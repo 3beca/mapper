@@ -1,4 +1,4 @@
-import { createDependencies } from '../src/dependencies';
+import { createDependencies, DependenciesName } from '../src/dependencies';
 describe(
     'createdependencies should',
     () => {
@@ -20,7 +20,7 @@ describe(
                     mapperService: expect.any(Function)
                 });
                 const depsDb = dependencies(['dbClient']);
-                await depsDb!.dbClient!.close();
+                await depsDb.dbClient.close();
             }
         );
 
@@ -45,7 +45,7 @@ describe(
                     responsesService: expect.any(Object)
                 });
                 const depsDb = dependencies(['dbClient']);
-                await depsDb!.dbClient!.close();
+                await depsDb.dbClient.close();
             }
         );
 
@@ -63,26 +63,26 @@ describe(
 
                 expect(deps).toEqual({});
                 const depsDb = dependencies(['dbClient']);
-                await depsDb!.dbClient!.close();
+                await depsDb.dbClient.close();
             }
         );
 
-        // it(
-        //     'receive no params and return an object with no dependencies when dependency not loaded',
-        //     async () => {
-        //         const dependencies = await createDependencies(
-        //             {
-        //                 DBNAME: 'CUSTOM_DBNAME',
-        //                 SOURCES: 'CUSTOM_SOURCES_COLLECTION'
-        //             }
-        //         );
+        it(
+            'receive no params and return an object with no dependencies when dependency not loaded',
+            async () => {
+                const dependencies = await createDependencies(
+                    {
+                        DBNAME: 'CUSTOM_DBNAME',
+                        SOURCES: 'CUSTOM_SOURCES_COLLECTION'
+                    }
+                );
 
-        //         const deps = dependencies(['notloadeddependency']);
+                const deps = dependencies(['notloadeddependency' as DependenciesName]);
 
-        //         expect(deps).toEqual({});
-        //         const depsDb = dependencies(['dbClient']);
-        //         await depsDb.dbClient.close();
-        //     }
-        // );
+                expect(deps).toEqual({});
+                const depsDb = dependencies(['dbClient']);
+                await depsDb.dbClient.close();
+            }
+        );
     }
 );

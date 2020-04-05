@@ -56,7 +56,7 @@ export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
 
     async function listTargets(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         try {
-            const targets = await targetsService!.getTargets();
+            const targets = await targetsService.getTargets();
             reply.code(200).send(targets);
         }
         catch (error) {
@@ -75,7 +75,7 @@ export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
     async function findTarget(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         const targetId = request.params.targetId;
         try {
-            const target = await targetsService!.getTargetById(targetId);
+            const target = await targetsService.getTargetById(targetId);
             if (!target) {
                 return void reply.code(404).send(encodeErrorFromType(null, ERROR_NOTFOUND.type, {details: `TargetId ${targetId} not found in database`}));
             }
@@ -125,7 +125,7 @@ export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
                 headers: body.headers,
                 url: body.url
             };
-            const inserted = await targetsService!.insertTarget(target);
+            const inserted = await targetsService.insertTarget(target);
             return void reply.code(200).send(inserted);
         }
         catch (error) {

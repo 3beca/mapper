@@ -79,7 +79,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
 
     async function listSources(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         try {
-            const sources = await sourcesService!.getSources();
+            const sources = await sourcesService.getSources();
             reply.code(200).send(sources);
         }
         catch (error) {
@@ -98,7 +98,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
     async function findByIdSource(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         const sourceId: string = request.params.sourceId;
         try {
-            const source = await sourcesService!.getSourceById(sourceId);
+            const source = await sourcesService.getSourceById(sourceId);
             if (!source) {
                 return void reply.code(404).send(encodeErrorFromType(null, ERROR_NOTFOUND.type, {details: `SourceId ${sourceId} not found in database`}));
             }
@@ -140,11 +140,11 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
                     // Check each flow
                     for (const flow of flows) {
                         const targetId = flow.targetId;
-                        const target = await targetsService!.getTargetById(targetId);
+                        const target = await targetsService.getTargetById(targetId);
                         if (!target) invalidParams.push({targetId: targetId || null});
                         const mappingId = flow.mappingId;
                         if (mappingId) {
-                            const mapping = await mappingsService!.getMappingById(mappingId);
+                            const mapping = await mappingsService.getMappingById(mappingId);
                             if (!mapping) invalidParams.push({mappingId});
                         }
                     }
@@ -154,7 +154,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
             }
             const responseId = body.responseId;
             if (responseId) {
-                const response = await responsesService!.getResponseById(responseId);
+                const response = await responsesService.getResponseById(responseId);
                 if (!response) invalidParams.push({responseId});
             }
             if (invalidParams.length > 0) {
@@ -168,7 +168,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
                 responseId,
                 serial: body.serial || false
             };
-            const inserted = await sourcesService!.insertSource(source);
+            const inserted = await sourcesService.insertSource(source);
             return void reply.code(200).send(inserted);
         }
         catch (error) {

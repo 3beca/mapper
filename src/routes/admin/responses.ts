@@ -55,7 +55,7 @@ export function buildAdminResponsesRoutes(deps: DependenciesLoader) {
 
     async function listResponses(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         try {
-            const responses = await responsesService!.getResponses();
+            const responses = await responsesService.getResponses();
             reply.code(200).send(responses);
         }
         catch (error) {
@@ -74,7 +74,7 @@ export function buildAdminResponsesRoutes(deps: DependenciesLoader) {
     async function findResponse(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
         const responseId = request.params.responseId;
         try {
-            const response = await responsesService!.getResponseById(responseId);
+            const response = await responsesService.getResponseById(responseId);
             if (!response) {
                 return void reply.code(404).send(encodeErrorFromType(null, ERROR_NOTFOUND.type, {details: `ResponseId ${responseId} not found in database`}));
             }
@@ -121,7 +121,7 @@ export function buildAdminResponsesRoutes(deps: DependenciesLoader) {
                 headers: body.headers,
                 template: body.template
             };
-            const inserted = await responsesService!.insertResponse(response);
+            const inserted = await responsesService.insertResponse(response);
             return void reply.code(200).send(inserted);
         }
         catch (error) {

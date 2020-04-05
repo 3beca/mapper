@@ -201,7 +201,7 @@ describe('Route mapper', () => {
         const response = await server.inject({
             method: 'POST',
             url: '/mappers/' + sourceId,
-            query: context.params as {[key: string]: string;},
+            query: context.params,
             payload: context.body,
             headers: context.headers
         });
