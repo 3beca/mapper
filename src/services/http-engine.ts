@@ -10,25 +10,25 @@ import {
     throwError
 } from '../errors';
 import type { Target } from './targets';
-import type { DefaultHeaders } from 'fastify';
+import type { IncomingHttpHeaders } from 'http';
 import type { Response } from './responses';
 
 export type SourceTransformed = {
     method: string;
     url: string;
-    headers?: DefaultHeaders;
+    headers?: IncomingHttpHeaders;
     body?: string|Buffer;
 };
 export type ResponseTransformed = {
     status: number;
-    headers?: DefaultHeaders;
+    headers?: IncomingHttpHeaders;
     body?: string|object;
 };
 export type ContextRequest = {
     method?: string,
     params?: {[key: string]: string},
     body?: any,
-    headers?: DefaultHeaders,
+    headers?: IncomingHttpHeaders,
     responses?: any[],
 };
 
@@ -90,7 +90,7 @@ export const transformSource = async (context: ContextRequest = {}, template: st
     }
 
     const headersString = await parseTemplate(context, target.headers);
-    let headers: DefaultHeaders;
+    let headers: IncomingHttpHeaders;
     try {
         headers = headersString ? JSON.parse(headersString) : undefined;
     }
@@ -118,7 +118,7 @@ export const transformResponse = async (context: ContextRequest = {}, response: 
     }
 
     const headersString = await parseTemplate(context, response.headers);
-    let headers: DefaultHeaders;
+    let headers: IncomingHttpHeaders;
     try {
         headers = headersString ? JSON.parse(headersString) : undefined;
     }

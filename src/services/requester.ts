@@ -5,7 +5,7 @@ import {
 } from '../utils/parse-headers';
 import { logger } from '../utils/logger';
 import { SourceTransformed } from './http-engine';
-import { DefaultHeaders } from 'fastify';
+import type { IncomingHttpHeaders } from 'http';
 
 const responseJson = async (response: Response): Promise<any> => {
     try {
@@ -21,7 +21,7 @@ export type RequesterResponse = {
     request: SourceTransformed;
     response: {
         status: number;
-        headers: DefaultHeaders
+        headers: IncomingHttpHeaders
         body: any
     };
 };

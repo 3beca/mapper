@@ -44,7 +44,7 @@ describe('builServer', () => {
       const context = {
           params: {id: 25},
           body: {name: 'Juanjo', temperature: 25.5},
-          headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'invalid/hedres'}
+          headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'invalid/headers'}
       };
 
 
@@ -63,7 +63,7 @@ describe('builServer', () => {
               ERROR_UNKNOWN.type,
               {
                   status: 415,
-                  details: 'FST_ERR_CTP_INVALID_MEDIA_TYPE: Unsupported Media Type: invalid/hedres'
+                  details: 'Unsupported Media Type: invalid/headers'
               }
           )
       );

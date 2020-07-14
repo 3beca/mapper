@@ -8,7 +8,7 @@ import {
     ErrorResponseList
 } from '../../errors';
 import type { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
-import type { ServerResponse } from 'http';
+import type { Server } from 'http';
 import type { DependenciesLoader } from '../../dependencies';
 
 const listSourceSchema = {
@@ -77,7 +77,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
         responsesService
     } = deps(['sourcesService', 'mappingsService', 'targetsService', 'responsesService']);
 
-    async function listSources(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
+    async function listSources(request: FastifyRequest, reply: FastifyReply<Server>) {
         try {
             const sources = await sourcesService.getSources();
             reply.code(200).send(sources);
@@ -95,7 +95,7 @@ export function buildAdminSourcesRoutes(deps: DependenciesLoader) {
         }
     }
 
-    async function findByIdSource(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
+    async function findByIdSource(request: FastifyRequest<{ Params: { sourceId: string } }>, reply: FastifyReply<Server>) {
         const sourceId: string = request.params.sourceId;
         try {
             const source = await sourcesService.getSourceById(sourceId);

@@ -98,7 +98,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping = {
                     name: 'mappingtest1',
@@ -135,7 +135,7 @@ describe(
                 const sourceName = 'testsourcename1';
                 const context = {
                     params: {id: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping = {
                     name: 'mappingtest1',
@@ -173,7 +173,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const mapping = {
                     name: 'mappingtest1',
@@ -236,7 +236,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const mapping = {
                     name: 'mappingtest1',
@@ -299,7 +299,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const source = {
                     _id: '123456789876',
@@ -339,7 +339,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const source = {
                     _id: '123456789876',
@@ -377,7 +377,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const source = {
                     _id: '123456789876',
@@ -400,7 +400,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const target = {
                     name: 'targettest1',
@@ -439,7 +439,7 @@ describe(
                 const context = {
                     params: {id: 25},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const target = {
                     name: 'targettest1',
@@ -479,7 +479,7 @@ describe(
                 const context = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25.5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca', 'content-type': 'application/json'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca', 'content-type': 'application/json'}
                 };
                 const source: SourcePersisted = {
                     _id: '123456789098',

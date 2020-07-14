@@ -1,6 +1,5 @@
 import nock from 'nock';
-import type { DefaultHeaders } from 'fastify';
-export const createGetRequest = (host: string, path: string, headers: DefaultHeaders|undefined, status: number, response: any, respHeaders: DefaultHeaders) => {
+export const createGetRequest = (host: string, path: string, headers: {[key:string]: string}|undefined, status: number, response: any, respHeaders: {[key:string]: string}) => {
     nock(host)
         .get(path)
         .reply(
@@ -15,7 +14,7 @@ export const createGetRequest = (host: string, path: string, headers: DefaultHea
     };
 };
 
-export const createPostRequest = (host: string, path: string, body: any, headers: DefaultHeaders|undefined, status: number, response: any, respHeaders: DefaultHeaders) => {
+export const createPostRequest = (host: string, path: string, body: any, headers: {[key:string]: string}|undefined, status: number, response: any, respHeaders: {[key:string]: string}) => {
     nock(host)
         .post(path, body)
         .reply(
@@ -32,7 +31,7 @@ export const createPostRequest = (host: string, path: string, body: any, headers
     };
 };
 
-export const createPutRequest = (host: string, path: string, body: any, headers: DefaultHeaders|undefined, status: number, response: any, respHeaders:DefaultHeaders) => {
+export const createPutRequest = (host: string, path: string, body: any, headers: {[key:string]: string}|undefined, status: number, response: any, respHeaders:{[key:string]: string}) => {
     nock(host)
         .put(path, body)
         .reply(
@@ -49,7 +48,7 @@ export const createPutRequest = (host: string, path: string, body: any, headers:
     };
 };
 
-export const createDeleteRequest = (host: string, path: string, body: any, headers: DefaultHeaders|undefined, status: number, response: any, respHeaders: DefaultHeaders) => {
+export const createDeleteRequest = (host: string, path: string, body: any, headers: {[key:string]: string}|undefined, status: number, response: any, respHeaders: {[key:string]: string}) => {
     nock(host)
         .delete(path, body)
         .reply(

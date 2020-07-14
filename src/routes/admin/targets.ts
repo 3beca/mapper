@@ -9,7 +9,7 @@ import {
     ErrorResponseList
 } from '../../errors';
 import type { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
-import type { ServerResponse } from 'http';
+import type { Server } from 'http';
 import type { DependenciesLoader } from '../../dependencies';
 
 const listTargetSchema = {
@@ -54,7 +54,7 @@ const TargetSchema = {
 export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
     const { targetsService } = deps(['targetsService']);
 
-    async function listTargets(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
+    async function listTargets(request: FastifyRequest, reply: FastifyReply<Server>) {
         try {
             const targets = await targetsService.getTargets();
             reply.code(200).send(targets);
@@ -72,7 +72,7 @@ export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
         }
     }
 
-    async function findTarget(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
+    async function findTarget(request: FastifyRequest<{ Params: { targetId: string } }>, reply: FastifyReply<Server>) {
         const targetId = request.params.targetId;
         try {
             const target = await targetsService.getTargetById(targetId);
@@ -94,7 +94,14 @@ export function buildAdminTargetsRoutes(deps: DependenciesLoader) {
         }
     }
 
-    async function createTarget(request: FastifyRequest, reply: FastifyReply<ServerResponse>) {
+    async function createTarget(request: FastifyRequest<{ Body: {
+        name: string,
+        status: string,
+        description: string,
+        method: string,
+        headers: string,
+        url: string
+    } }>, reply: FastifyReply<Server>) {
         const body = request.body || {};
         let errors: ErrorResponseList = null;
         const missingParams = [

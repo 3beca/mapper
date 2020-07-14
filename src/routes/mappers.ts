@@ -10,12 +10,12 @@ import { transformResponse, ContextRequest } from '../services/http-engine';
 import { logger } from '../utils/logger';
 import type { DependenciesLoader } from '../dependencies';
 import type { FastifyRequest, FastifyReply, FastifyInstance } from 'fastify';
-import type { ServerResponse } from 'http';
+import type { Server } from 'http';
 
 export const mapperFlow = (deps: DependenciesLoader) => {
     const {sourcesService, mapperService, responsesService, requesterService} = deps(['sourcesService', 'mapperService', 'responsesService', 'requesterService']);
 
-    return async (request: FastifyRequest, reply: FastifyReply<ServerResponse>) => {
+    return async (request: FastifyRequest<{ Params: { sourceId: string }, Querystring: { [key:string]: string } }>, reply: FastifyReply<Server>) => {
 
         const sourceId: string = request.params.sourceId;
         const context: ContextRequest = {

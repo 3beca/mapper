@@ -23,7 +23,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -66,7 +66,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -148,7 +148,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const target: Target = {
                     name: 'target-test-mapping-undefined',
@@ -180,7 +180,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -209,7 +209,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -233,7 +233,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -262,7 +262,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -290,7 +290,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -322,7 +322,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -355,7 +355,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const target: Target = {
                     name: 'target-test-httpengine',
@@ -384,7 +384,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -413,7 +413,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: undefined,
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const mapping: Mapping = {
                     name: 'mappingtest1',
@@ -476,7 +476,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response = undefined as unknown as Response;
 
@@ -495,7 +495,7 @@ describe(
                 expect.assertions(1);
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response = 'invalidmapping' as unknown as Response;
 
@@ -514,7 +514,7 @@ describe(
                 expect.assertions(1);
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -539,7 +539,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -563,7 +563,7 @@ describe(
                 expect.assertions(1);
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -587,7 +587,7 @@ describe(
                 expect.assertions(1);
                 const context: ContextRequest = {
                     params: {'id': '25'},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -611,7 +611,7 @@ describe(
                 expect.assertions(1);
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -633,7 +633,7 @@ describe(
             async () => {
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -654,7 +654,7 @@ describe(
             async () => {
                 const context: ContextRequest = {
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -682,7 +682,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 5},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'responsetest1',
@@ -737,7 +737,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'mappingtest1',
@@ -765,7 +765,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: undefined,
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const response: Response = {
                     name: 'mappingtest1',
@@ -788,7 +788,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: undefined,
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'},
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'},
                     responses: [
                         {
                             request: {
@@ -836,7 +836,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const template = '';
 
@@ -855,7 +855,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const template = '{"appId": "{{headers["X-APPID"]}}"}';
 
@@ -877,7 +877,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const template = '';
 
@@ -896,7 +896,7 @@ describe(
                 const context: ContextRequest = {
                     params: {'id': '25'},
                     body: {name: 'Juanjo', temperature: 25},
-                    headers: {timestamp: 123456789, 'X-APPID': 'tribeca'}
+                    headers: { timestamp: '123456789', 'X-APPID': 'tribeca'}
                 };
                 const template = '{"appId": "{{headers["X-APPID"]}}"}';
 
