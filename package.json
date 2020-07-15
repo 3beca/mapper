@@ -49,7 +49,7 @@
     "convict": "^6.0.0",
     "fastify": "^3.0.2",
     "fastify-formbody": "^4.0.3",
-    "fastify-swagger": "^3.1.1",
+    "fastify-swagger": "^3.1.2",
     "liquidjs": "^9.14.1",
     "mongodb": "^3.5.9",
     "node-fetch": "^2.6.0"
