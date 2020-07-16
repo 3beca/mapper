@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "convict": "^6.0.0",
-    "fastify": "^3.0.2",
+    "fastify": "^3.0.3",
     "fastify-formbody": "^4.0.3",
     "fastify-swagger": "^3.1.2",
     "liquidjs": "^9.14.1",
