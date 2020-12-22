@@ -43,7 +43,7 @@ export function buildServer(deps: DependenciesLoader) {
 		}
 	});
 
-	// Form-body pluggin
+	// Form-body plugin
 	app.register(formBody);
 
 	// End points
@@ -65,9 +65,9 @@ export function buildServer(deps: DependenciesLoader) {
 
 	app.setErrorHandler((error, request, reply) => {
 		if (error.statusCode && error.statusCode < 500) {
-			request.log.info(error);
+			request.log.info(error.message);
 		} else {
-			request.log.error(error);
+			request.log.error(error.message);
 		}
 		reply.status(error.statusCode || 500).send(
 			encodeErrorFromType(
