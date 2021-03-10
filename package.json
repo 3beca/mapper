@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/3beca/mapper#readme",
   "devDependencies": {
-    "@types/convict": "^5.2.2",
+    "@types/convict": "^6.0.0",
     "@types/jest": "^26.0.20",
     "@types/mongodb": "^3.6.3",
     "@types/node": "^14.14.33",
