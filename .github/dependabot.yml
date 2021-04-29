@@ -1,0 +1,23 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: "@types/mongodb"
+    versions:
+    - 3.6.10
+    - 3.6.11
+    - 3.6.5
+    - 3.6.6
+    - 3.6.7
+    - 3.6.8
+    - 3.6.9
+  - dependency-name: "@types/convict"
+    versions:
+    - 6.0.0
+  - dependency-name: fastify-swagger
+    versions:
+    - 4.0.0
