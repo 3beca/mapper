@@ -42,7 +42,7 @@
     "nock": "^13.1.1",
     "nodemon": "^2.0.12",
     "ts-jest": "^25.5.1",
-    "ts-node": "^10.1.0",
+    "ts-node": "^10.2.0",
     "typescript": "^3.9.10"
   },
   "dependencies": {
