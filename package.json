@@ -29,7 +29,7 @@
   "homepage": "https://github.com/3beca/mapper#readme",
   "devDependencies": {
     "@types/convict": "^5.2.2",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.0.2",
     "@types/mongodb": "^4.0.7",
     "@types/node": "^16.9.4",
     "@types/request": "^2.48.7",
