@@ -52,6 +52,6 @@
     "fastify-swagger": "^4.12.6",
     "liquidjs": "^9.28.5",
     "mongodb": "^3.6.10",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^3.0.0"
   }
 }
