@@ -50,7 +50,7 @@
     "fastify": "^3.26.0",
     "fastify-formbody": "^5.2.0",
     "fastify-swagger": "^4.13.1",
-    "liquidjs": "^9.32.1",
+    "liquidjs": "^9.33.1",
     "mongodb": "^3.6.10",
     "node-fetch": "^2.6.1"
   }
