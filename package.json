@@ -46,7 +46,7 @@
     "typescript": "^3.9.10"
   },
   "dependencies": {
-    "convict": "^6.2.1",
+    "convict": "^6.2.2",
     "fastify": "^3.27.4",
     "fastify-formbody": "^5.2.0",
     "fastify-swagger": "^5.0.0",
