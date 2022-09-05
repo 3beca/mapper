@@ -31,7 +31,7 @@
     "@types/convict": "^5.2.2",
     "@types/jest": "^27.5.0",
     "@types/mongodb": "^4.0.7",
-    "@types/node": "^17.0.42",
+    "@types/node": "^18.7.15",
     "@types/request": "^2.48.8",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
     "@typescript-eslint/parser": "^2.34.0",
